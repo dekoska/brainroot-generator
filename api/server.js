@@ -24,7 +24,7 @@ const tokenUrl = "https://open.tiktokapis.com/v2/oauth/token/";
 
 // const qs = require("qs");
 
-app.get("/api/token", async (req, res) => {
+app.post("/api/token", async (req, res) => {
     const { code, state } = req.query;
 
     if (!code) {
