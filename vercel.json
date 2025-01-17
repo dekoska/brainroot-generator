@@ -1,0 +1,9 @@
+{
+    "routes": [
+      {
+        "src": "/frontend/main",
+        "dest": "/frontend/main.html"
+      }
+    ]
+  }
+  
