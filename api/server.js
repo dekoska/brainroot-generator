@@ -2,13 +2,18 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cookieParser=require("cookie-parser");
 const axios = require("axios");
-// const path = require("path");
-
+const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 8080;
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+
+app.use(cors({
+    origin: ["https://brainroot-generator.vercel.app"], // Zezwól na tę domenę
+    methods: ["GET", "POST"], // Dozwolone metody HTTP
+    credentials: true, // Jeśli używasz ciasteczek
+}));
 
 //api conf
 const clientKey = "sbaw7f3n8zn9n1qtdp";

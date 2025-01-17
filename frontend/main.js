@@ -5,7 +5,7 @@ const state = urlParams.get('state');
 if (code) {
     console.log("Kod autoryzacyjny:", code);
 
-    fetch('http://localhost:8080/api//token', { // Użyj właściwego URL, gdy wdrożysz backend
+    fetch('http://localhost:8080/api/token', { 
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
