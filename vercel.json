@@ -3,7 +3,11 @@
       {
         "src": "/frontend/main",
         "dest": "/frontend/main.html"
+      },
+      {
+        "src": "/api/(.*)",
+        "dest": "/backend/server.js"
       }
     ]
-  }
-  
+}
+   
