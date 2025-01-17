@@ -16,7 +16,7 @@ app.use(cors({
     credentials: true, 
 }));
 
-//api conf
+//api config
 const clientKey = "sbaw7f3n8zn9n1qtdp";
 const clientSecret = "AdNVRPR3gpR2C7JBGX7GMm5MpkeyMjQv";
 const redirectUri = "https://brainroot-generator.vercel.app/frontend/main";
