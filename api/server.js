@@ -25,7 +25,7 @@ const tokenUrl = "https://open.tiktokapis.com/v2/oauth/token/";
 // const qs = require("qs");
 
 app.post("/api/token", async (req, res) => {
-    const { code, state } = req.query;
+    const { code, state } = req.body;
 
     if (!code) {
         return res.status(400).send("Authorization code is missing");
