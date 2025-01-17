@@ -19,7 +19,7 @@ app.use(cors({
 //api conf
 const clientKey = "sbaw7f3n8zn9n1qtdp";
 const clientSecret = "AdNVRPR3gpR2C7JBGX7GMm5MpkeyMjQv";
-const redirectUri = "https://tiktok-project-one.vercel.app/api/callback";
+const redirectUri = "https://brainroot-generator.vercel.app/frontend/main";
 const tokenUrl = "https://open.tiktokapis.com/v2/oauth/token/";
 
 app.post("/api/token", async (req, res) => {
