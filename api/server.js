@@ -5,14 +5,15 @@ const axios = require("axios");
 const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 8080;
+const qs = require("qs");
 
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 app.use(cors({
-    origin: ["https://brainroot-generator.vercel.app"], // Zezwól na tę domenę
-    methods: ["GET", "POST"], // Dozwolone metody HTTP
-    credentials: true, // Jeśli używasz ciasteczek
+    origin: ["https://brainroot-generator.vercel.app"], 
+    methods: ["GET", "POST"], 
+    credentials: true, 
 }));
 
 //api conf
@@ -21,18 +22,14 @@ const clientSecret = "AdNVRPR3gpR2C7JBGX7GMm5MpkeyMjQv";
 const redirectUri = "https://tiktok-project-one.vercel.app/api/callback";
 const tokenUrl = "https://open.tiktokapis.com/v2/oauth/token/";
 
-
-// const qs = require("qs");
-
 app.post("/api/token", async (req, res) => {
-    const { code, state } = req.body;
+    const { code } = req.body;
 
     if (!code) {
-        return res.status(400).send("Authorization code is missing");
+        return res.status(400).json({ error: "Brak kodu autoryzacyjnego" });
     }
 
     try {
-        // Wymiana kodu na token
         const response = await axios.post("https://open.tiktokapis.com/v2/oauth/token/", qs.stringify({
             client_key: clientKey,
             client_secret: clientSecret,
@@ -57,7 +54,9 @@ app.post("/api/token", async (req, res) => {
             });
 
             console.log("Access Token zapisany w ciasteczku:", accessToken);
+            res.json({ message: "Access token retrieved successfully", accessToken });
         } else {
+            console.error("Failed to retrieve access token:", response.data);
             res.status(500).send("Failed to retrieve access token");
         }
     } catch (error) {
@@ -72,9 +71,7 @@ app.post("/api/token", async (req, res) => {
             error: error.response?.data || error.message,
         });
     }
-    
 });
-
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
