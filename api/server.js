@@ -1,26 +1,25 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const cookieParser=require("cookie-parser");
+const cookieParser = require("cookie-parser");
 const axios = require("axios");
 const cors = require("cors");
-const app = express();
-const port = process.env.PORT || 8080;
 const qs = require("qs");
 
+const app = express();
+const port = process.env.PORT || 8080;
+
+// Middleware
 app.use(bodyParser.json());
 app.use(cookieParser());
-
 app.use(cors({
     origin: ["https://brainroot-generator.vercel.app"], 
     methods: ["GET", "POST"], 
     credentials: true, 
 }));
 
-//api config
 const clientKey = "sbaw7f3n8zn9n1qtdp";
 const clientSecret = "AdNVRPR3gpR2C7JBGX7GMm5MpkeyMjQv";
 const redirectUri = "https://brainroot-generator.vercel.app/frontend/main";
-const tokenUrl = "https://open.tiktokapis.com/v2/oauth/token/";
 
 app.post("/api/token", async (req, res) => {
     const { code } = req.body;
@@ -50,7 +49,7 @@ app.post("/api/token", async (req, res) => {
                 httpOnly: true,
                 secure: false,
                 sameSite: "strict",
-                maxAge: 3600 * 1000,
+                maxAge: 3600 * 1000, 
             });
 
             console.log("Access Token zapisany w ciasteczku:", accessToken);
@@ -72,9 +71,10 @@ app.post("/api/token", async (req, res) => {
         });
     }
 });
-
+s
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
+
 
 // lsof -i :8080

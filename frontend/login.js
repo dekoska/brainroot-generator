@@ -55,7 +55,7 @@ function generateTikTokOAuthURL(clientKey, redirectURI, scope) {
 
 const clientKey = "sbaw7f3n8zn9n1qtdp";
 const redirectURI = "https://brainroot-generator.vercel.app/frontend/main";
-const scope = "user.info.basic";
+const scope = "user.info.basic, video.upload, video.publish";
 
 const oauthURL = generateTikTokOAuthURL(clientKey, redirectURI, scope);
 
