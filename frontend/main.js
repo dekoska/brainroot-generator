@@ -36,12 +36,12 @@ if (code) {
 
 //query creator info
 function queryCreatorInfo(accessToken) {
-    fetch('https://open.tiktokapis.com/v2/post/publish/creator_info/query/', {
+    fetch('/api/creator-info', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json; charset=UTF-8',
+            'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ accessToken }),
     })
     .then(response => {
         if (!response.ok) {
@@ -50,14 +50,10 @@ function queryCreatorInfo(accessToken) {
         return response.json(); 
     })
     .then(data => {
-        if (data.error && data.error.code === 'ok') {
-            console.log("Dane creatora:", data.data);
-            document.body.insertAdjacentHTML('beforeend', `<pre>${JSON.stringify(data.data, null, 2)}</pre>`);
-        } else {
-            console.error("Błąd podczas pobierania danych creatora:", data.error?.message || 'Nieznany błąd.');
-        }
+        console.log("Dane creatora:", data);
+        document.body.insertAdjacentHTML('beforeend', `<pre>${JSON.stringify(data, null, 2)}</pre>`);
     })
     .catch(error => {
-        console.error("Błąd podczas komunikacji z API TikTok:", error);
+        console.error("Błąd podczas komunikacji z backendem:", error);
     });
 }

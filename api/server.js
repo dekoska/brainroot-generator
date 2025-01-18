@@ -66,6 +66,35 @@ app.post("/api/token", async (req, res) => {
     }
 });
 
+//query creator info
+app.post("/api/creator-info", async (req, res) => {
+    const { accessToken } = req.body;
+
+    if (!accessToken) {
+        return res.status(400).json({ error: "Brak tokenu dostępowego" });
+    }
+
+    try {
+        const response = await axios.post(
+            "https://open.tiktokapis.com/v2/post/publish/creator_info/query/",
+            {},
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json; charset=UTF-8",
+                },
+            }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Błąd podczas komunikacji z TikTok API:", error);
+        res.status(error.response?.status || 500).json({
+            error: error.response?.data || "Nieznany błąd",
+        });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
