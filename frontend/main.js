@@ -59,7 +59,7 @@ function queryCreatorInfo(accessToken) {
     });
 }
 
-//upload url
+//upload uri
 function initVideoUpload(accessToken, postInfo, sourceInfo) {
     fetch('/api/video/init', {
         method: 'POST',
