@@ -95,6 +95,44 @@ app.post("/api/creator-info", async (req, res) => {
     }
 });
 
+
+//video upload
+app.post("/api/video/init", async (req, res) => {
+    const { accessToken, postInfo, sourceInfo } = req.body;
+
+    if (!accessToken || !postInfo || !sourceInfo) {
+        return res.status(400).json({ error: "Brak wymaganych danych" });
+    }
+
+    try {
+        const response = await axios.post(
+            "https://open.tiktokapis.com/v2/post/publish/video/init/",
+            {
+                post_info: postInfo,
+                source_info: sourceInfo,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json; charset=UTF-8",
+                },
+            }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error("Błąd podczas inicjacji przesyłania wideo:", error.response?.data || error.message);
+        res.status(500).json({ error: error.response?.data || "Nieznany błąd" });
+    }
+});
+
+
+
+
+
+
+
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
