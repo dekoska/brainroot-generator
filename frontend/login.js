@@ -35,7 +35,7 @@ const codeChallenge = CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(codeVerifier
 
 console.log("State:", state);
 console.log("Code Verifier:", codeVerifier);
-console.log("Code Challenge:", codeChallenge);
+console.log("Code Challenge:", codeChallenge); 
 
 // Konstrukcja linku OAuth
 function generateTikTokOAuthURL(clientKey, redirectURI, scope) {
