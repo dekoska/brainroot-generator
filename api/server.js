@@ -71,7 +71,7 @@ app.post("/api/token", async (req, res) => {
         });
     }
 });
-s
+
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);
 });
