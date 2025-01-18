@@ -1,6 +1,7 @@
 const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get('code');
 const state = urlParams.get('state');
+let accessToken = null; 
 
 if (code) {
     console.log("Kod autoryzacyjny:", code);
@@ -119,6 +120,16 @@ function uploadVideo(uploadUrl, accessToken, videoFile) {
 document.getElementById("upload-form").addEventListener("submit", (event) => {
     event.preventDefault();
 
+    if (!accessToken) {
+        console.error("Brak tokenu dostępowego. Upewnij się, że token został poprawnie pobrany.");
+        return;
+    }
+
+    const file = document.getElementById("video").files[0];
+    const videoSize = file.size;
+    const chunkSize = videoSize; 
+
+
     const postInfo = {
         title: "Mój prywatny filmik na TikTok!", 
         privacy_level: "SELF_ONLY", 
@@ -129,9 +140,9 @@ document.getElementById("upload-form").addEventListener("submit", (event) => {
     };
     const sourceInfo = {
         source: "FILE_UPLOAD",
-        video_size: 123456, // bajty
-        chunk_size: 10000000, // rozmiar chunku???
-        total_chunk_count: 1, // fragmenty
+        video_size: videoSize,
+        chunk_size: chunkSize,
+        total_chunk_count: 1,
     };
 
     initVideoUpload(accessToken, postInfo, sourceInfo);
