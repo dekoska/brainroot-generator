@@ -5,7 +5,7 @@ const state = urlParams.get('state');
 if (code) {
     console.log("Kod autoryzacyjny:", code);
 
-    fetch('/api', {
+    fetch('/api/token', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
