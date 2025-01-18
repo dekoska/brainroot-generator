@@ -20,7 +20,7 @@ if (code) {
         return response.json(); 
     })
     .then(data => {
-        const accessToken = data.accessToken; 
+        accessToken = data.accessToken; 
         console.log("Otrzymano token dostępowy:", accessToken);
         if (accessToken) {
             queryCreatorInfo(accessToken);
