@@ -14,7 +14,7 @@ getAccessToken().then(token => {
         queryCreatorInfo(accessToken);
 
         // Obsługa formularza przesyłania wideo
-        setupFormHandlers();
+        setupFormHandlers(accessToken);
     } else {
         console.error("Nie udało się pobrać tokenu. Przekierowanie na stronę logowania.");
         window.location.href = '/frontend/login'; // Przekierowanie na stronę logowania
@@ -30,10 +30,6 @@ function setupFormHandlers() {
         const videoInput = document.getElementById('video');
         const file = videoInput.files[0];
 
-        if (!file) {
-            alert('Proszę wybrać plik wideo.');
-            return;
-        }
 
         if (action === 'content-creator') {
             // Obsługa Content Creator API
