@@ -1,5 +1,5 @@
 import { getAccessToken } from './js/auth.js';
-import { queryCreatorInfo } from './js/creatorInfo.js';
+import { queryCreatorInfo } from './js/creator-info.js';
 import { setupUploadButton } from './js/content-video-upload.js';
 
 let accessToken = null;
