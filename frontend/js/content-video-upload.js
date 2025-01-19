@@ -53,7 +53,7 @@ function uploadVideo(uploadUrl) {
     });
 }
 
-function setupUploadButton(accessToken) {
+export function setupUploadButton(accessToken) {
     document.getElementById("upload-form").addEventListener("submit", (event) => {
         event.preventDefault();
 
