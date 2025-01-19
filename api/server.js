@@ -13,8 +13,8 @@ app.use(cookieParser());
 
 // Importowanie tras
 const tokenRoutes = require("./routes/token");
-const creatorInfoRoutes = require("./routes/creator-info");
-const videoUploadRoutes = require("./routes/content-video-upload");
+const creatorInfoRoutes = require("./routes/creator-info-api");
+const videoUploadRoutes = require("./routes/content-video-upload-api");
 const supabaseUploadRoutes = require("./routes/supabase");
 
 // Użycie tras

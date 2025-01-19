@@ -14,8 +14,10 @@ export function initVideoUpload(accessToken, postInfo, sourceInfo) {
     })
     .then(data => {
         console.log("Inicjacja przesyłania wideo zakończona sukcesem:", data);
+
         if (data.data?.upload_url) {
-            uploadVideo(data.data.upload_url);
+            // Wywołanie uniwersalnej funkcji uploadu z nową logiką
+            uploadVideo("direct", data.data.upload_url);
         } else {
             throw new Error("Nie udało się uzyskać URL przesyłania.");
         }
@@ -25,7 +27,8 @@ export function initVideoUpload(accessToken, postInfo, sourceInfo) {
     });
 }
 
-async function uploadToSupabase() {
+
+async function uploadVideo(destination, uploadUrl = null) {
     const fileInput = document.getElementById("video");
     const file = fileInput.files[0];
 
@@ -34,25 +37,51 @@ async function uploadToSupabase() {
         return;
     }
 
-    const formData = new FormData();
-    formData.append("video", file);
+    if (destination === "supabase") {
+        // Przesyłanie pliku do Supabase
+        const formData = new FormData();
+        formData.append("video", file);
 
-    try {
-        const response = await fetch("/api/video/upload", {
-            method: "POST",
-            body: formData,
-        });
+        try {
+            const response = await fetch("/api/video/upload", {
+                method: "POST",
+                body: formData,
+            });
 
-        if (!response.ok) {
-            throw new Error(`Błąd HTTP! status: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`Błąd HTTP! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log("Plik przesłany do Supabase:", result.url);
+        } catch (error) {
+            console.error("Błąd podczas przesyłania do Supabase:", error);
         }
+    } else if (destination === "direct" && uploadUrl) {
+        // Przesyłanie pliku bezpośrednio przez URL
+        try {
+            const response = await fetch(uploadUrl, {
+                method: "PUT",
+                headers: {
+                    'Content-Type': 'video/mp4',
+                    'Content-Range': `bytes 0-${file.size - 1}/${file.size}`,
+                },
+                body: file,
+            });
 
-        const result = await response.json();
-        console.log("Plik przesłany do Supabase:", result.url);
-    } catch (error) {
-        console.error("Błąd podczas przesyłania do Supabase:", error);
+            if (!response.ok) {
+                throw new Error(`Błąd HTTP! status: ${response.status}`);
+            }
+
+            console.log("Przesyłanie wideo zakończone sukcesem.");
+        } catch (error) {
+            console.error("Błąd podczas przesyłania wideo:", error);
+        }
+    } else {
+        console.error("Nieprawidłowy cel przesyłania lub brak URL.");
     }
 }
+
 
 export function setupUploadButton(accessToken) {
     document.getElementById("upload-form").addEventListener("submit", (event) => {
