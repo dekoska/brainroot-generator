@@ -5,8 +5,18 @@
         "dest": "/frontend/main.html"
       },
       {
+        "src": "/frontend/login",
+        "dest": "/frontend/login.html"
+      },
+      {
         "src": "/api/(.*)",
         "dest": "api/server.js"
+      }
+    ],
+    "crons": [
+      {
+        "path": "/api/cleanup",
+        "schedule": "0 0 * * *"
       }
     ]
 }
