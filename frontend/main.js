@@ -59,31 +59,24 @@ function setupFormHandlers() {
         }
 
         if (action === 'share-kit') {
-            // Obsługa Share Kit
             console.log('Uruchamianie Share Kit...');
-            const videoPath = 'uploads/test.mp4'; // Ścieżka w Supabase - zastąp dynamicznie generowaną wartością
-            const title = "Mój filmik na TikTok";
-
-            try {
-                const response = await fetch('/api/share-kit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ videoPath, title }),
-                });
-
-                if (!response.ok) {
-                    const errorDetails = await response.json();
-                    throw new Error(`Błąd Share Kit: ${errorDetails.message}`);
-                }
-
-                const result = await response.json();
-                alert(`Wideo zostało udostępnione! Link: ${result.share_url}`);
-            } catch (error) {
-                console.error('Błąd podczas udostępniania wideo przez Share Kit:', error);
-                alert('Nie udało się udostępnić wideo.');
+            const videoInput = document.getElementById('video');
+            const file = videoInput.files[0];
+    
+            if (!file) {
+                alert('Proszę wybrać plik wideo.');
+                return;
             }
+    
+            // Deep Linking do aplikacji TikTok
+            const redirectURI = encodeURIComponent('https://brainroot-generator.vercel.app/share-callback'); 
+            const deepLink = `tiktok://open?localIdentifiers=${file.name}&redirectURI=${redirectURI}`;
+    
+            console.log("Przekierowanie do TikToka:", deepLink);
+    
+            // Przekierowanie użytkownika do TikToka
+            window.location.href = deepLink;
         }
+        
     });
 }
