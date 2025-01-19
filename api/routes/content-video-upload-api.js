@@ -24,7 +24,12 @@ router.post("/", async (req, res) => {
             }
         );
         
-        console.log("Odpowiedź TikTok API:", response.data);
+        console.log("Pełna odpowiedź TikTok API z backendu:", response.data);
+
+        if (!response.data || Object.keys(response.data).length === 0) {
+            throw new Error("Odpowiedź API TikTok jest pusta lub nie zawiera wymaganych danych.");
+        }
+
         res.status(200).json(response.data);
     } catch (error) {
         res.status(500).json({ error: error.response?.data || "Nieznany błąd" });
