@@ -30,7 +30,7 @@ router.post("/", async (req, res) => {
             throw new Error("Pusta odpowiedź API TikTok");
         }
 
-        console.log("Odpowiedź TikTok API:", response.data);
+        console.log("Odpowiedź TikTok API z backendu:", response.data);
         res.status(200).json(response.data);
     } catch (error) {
         console.error("Błąd API TikTok:", error.response?.data || error.message);

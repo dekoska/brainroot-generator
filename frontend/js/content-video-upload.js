@@ -114,6 +114,7 @@ export function setupUploadButton(accessToken) {
             disable_stitch: false,
             video_cover_timestamp_ms: 1000,
         };
+
         const sourceInfo = {
             source: "FILE_UPLOAD",
             video_size: videoSize,
@@ -121,11 +122,18 @@ export function setupUploadButton(accessToken) {
             total_chunk_count: 1,
         };
 
-        
         try {
+            // Najpierw przesyłanie pliku do Supabase
+            console.log("Rozpoczęcie przesyłania pliku do Supabase...");
+            await uploadVideo("supabase");
+
+            console.log("Plik przesłany do Supabase, inicjalizacja TikTok...");
+
+            // Następnie inicjalizacja przesyłania do TikToka
             const initResponse = await initVideoUpload(accessToken, postInfo, sourceInfo);
-            console.log("Odpowiedź API TikTok z backendu:", initResponse);
-        
+            console.log("Dane przesyłane do API:", JSON.stringify({ accessToken, postInfo, sourceInfo }, null, 2));
+            console.log("Odpowiedź API TikTok z frontendu:", initResponse);
+
             if (initResponse?.data?.upload_url) {
                 await uploadVideo("direct", initResponse.data.upload_url);
             } else {
@@ -136,3 +144,5 @@ export function setupUploadButton(accessToken) {
         }
     });
 }
+
+
