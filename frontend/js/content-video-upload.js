@@ -138,8 +138,21 @@ export function setupUploadButton(accessToken) {
         // } catch (error) {
         //     console.error("Błąd podczas przesyłania wideo:", error);
         // }
+        // try {
+        //     const initResponse = await initVideoUpload(accessToken, postInfo, sourceInfo);
+        
+        //     if (initResponse?.data?.upload_url) {
+        //         await uploadVideo("direct", initResponse.data.upload_url);
+        //     } else {
+        //         throw new Error("Nie udało się uzyskać URL przesyłania.");
+        //     }
+        // } catch (error) {
+        //     console.error("Błąd podczas przesyłania wideo:", error);
+        // }
+        
         try {
             const initResponse = await initVideoUpload(accessToken, postInfo, sourceInfo);
+            console.log("Odpowiedź API TikTok:", initResponse);
         
             if (initResponse?.data?.upload_url) {
                 await uploadVideo("direct", initResponse.data.upload_url);
@@ -149,6 +162,5 @@ export function setupUploadButton(accessToken) {
         } catch (error) {
             console.error("Błąd podczas przesyłania wideo:", error);
         }
-        
     });
 }
