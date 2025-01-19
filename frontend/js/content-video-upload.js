@@ -84,7 +84,7 @@ async function uploadVideo(destination, uploadUrl = null) {
 
 
 export function setupUploadButton(accessToken) {
-    document.getElementById("upload-form").addEventListener("submit", (event) => {
+    document.getElementById("upload-form").addEventListener("submit", async (event) => {
         event.preventDefault();
 
         if (!accessToken) {
@@ -93,6 +93,12 @@ export function setupUploadButton(accessToken) {
         }
 
         const file = document.getElementById("video").files[0];
+
+        if (!file) {
+            console.error("Nie wybrano pliku wideo.");
+            return;
+        }
+
         const videoSize = file.size;
 
         const postInfo = {
@@ -110,7 +116,22 @@ export function setupUploadButton(accessToken) {
             total_chunk_count: 1,
         };
 
-        uploadToSupabase();
-        initVideoUpload(accessToken, postInfo, sourceInfo);
+        try {
+            // Przesyłanie pliku do Supabase
+            await uploadVideo("supabase");
+
+            // Inicjalizacja przesyłania na TikTok
+            const initResponse = await initVideoUpload(accessToken, postInfo, sourceInfo);
+
+            if (initResponse.data?.upload_url) {
+                // Przesyłanie wideo bezpośrednio do TikTok
+                await uploadVideo("direct", initResponse.data.upload_url);
+            } else {
+                throw new Error("Nie udało się uzyskać URL przesyłania.");
+            }
+
+        } catch (error) {
+            console.error("Błąd podczas przesyłania wideo:", error);
+        }
     });
 }
