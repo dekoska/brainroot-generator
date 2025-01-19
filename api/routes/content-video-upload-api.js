@@ -10,6 +10,8 @@ router.post("/", async (req, res) => {
     }
 
     try {
+        console.log("Wysyłane dane do TikToka:", { accessToken, postInfo, sourceInfo });
+
         const response = await axios.post(
             "https://open.tiktokapis.com/v2/post/publish/video/init/",
             {
@@ -23,16 +25,16 @@ router.post("/", async (req, res) => {
                 },
             }
         );
-        
-        console.log("Pełna odpowiedź TikTok API z backendu:", response.data);
 
-        if (!response.data || Object.keys(response.data).length === 0) {
-            throw new Error("Odpowiedź API TikTok jest pusta lub nie zawiera wymaganych danych.");
+        if (!response.data) {
+            throw new Error("Pusta odpowiedź API TikTok");
         }
 
+        console.log("Odpowiedź TikTok API:", response.data);
         res.status(200).json(response.data);
     } catch (error) {
-        res.status(500).json({ error: error.response?.data || "Nieznany błąd" });
+        console.error("Błąd API TikTok:", error.response?.data || error.message);
+        res.status(500).json({ error: error.response?.data || "Nieznany błąd z TikTok API" });
     }
 });
 
