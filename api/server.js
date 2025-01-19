@@ -15,11 +15,13 @@ app.use(cookieParser());
 const tokenRoutes = require("./routes/token");
 const creatorInfoRoutes = require("./routes/creator-info");
 const videoUploadRoutes = require("./routes/content-video-upload");
+const supabaseUploadRoutes = require("./routes/supabase-upload");
 
 // Użycie tras
 app.use("/api/token", tokenRoutes);
 app.use("/api/creator-info", creatorInfoRoutes);
 app.use("/api/video/init", videoUploadRoutes);
+app.use("/api/video", supabaseUploadRoutes);
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

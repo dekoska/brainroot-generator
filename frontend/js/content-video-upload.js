@@ -25,7 +25,7 @@ export function initVideoUpload(accessToken, postInfo, sourceInfo) {
     });
 }
 
-function uploadVideo(uploadUrl) {
+async function uploadToSupabase() {
     const fileInput = document.getElementById("video");
     const file = fileInput.files[0];
 
@@ -34,23 +34,24 @@ function uploadVideo(uploadUrl) {
         return;
     }
 
-    fetch(uploadUrl, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'video/mp4',
-            'Content-Range': `bytes 0-${file.size - 1}/${file.size}`,
-        },
-        body: file,
-    })
-    .then(response => {
+    const formData = new FormData();
+    formData.append("video", file);
+
+    try {
+        const response = await fetch("/api/video/upload", {
+            method: "POST",
+            body: formData,
+        });
+
         if (!response.ok) {
             throw new Error(`Błąd HTTP! status: ${response.status}`);
         }
-        console.log("Przesyłanie wideo zakończone sukcesem.");
-    })
-    .catch(error => {
-        console.error("Błąd podczas przesyłania wideo:", error);
-    });
+
+        const result = await response.json();
+        console.log("Plik przesłany do Supabase:", result.url);
+    } catch (error) {
+        console.error("Błąd podczas przesyłania do Supabase:", error);
+    }
 }
 
 export function setupUploadButton(accessToken) {
@@ -80,6 +81,7 @@ export function setupUploadButton(accessToken) {
             total_chunk_count: 1,
         };
 
+        uploadToSupabase();
         initVideoUpload(accessToken, postInfo, sourceInfo);
     });
 }
