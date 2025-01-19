@@ -15,7 +15,7 @@ app.use(cookieParser());
 const tokenRoutes = require("./routes/token");
 const creatorInfoRoutes = require("./routes/creator-info");
 const videoUploadRoutes = require("./routes/content-video-upload");
-const supabaseUploadRoutes = require("./routes/supabase-upload");
+const supabaseUploadRoutes = require("./routes/supabase");
 
 // Użycie tras
 app.use("/api/token", tokenRoutes);
