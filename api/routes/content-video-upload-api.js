@@ -23,7 +23,8 @@ router.post("/", async (req, res) => {
                 },
             }
         );
-
+        
+        console.log("Odpowiedź TikTok API:", response.data);
         res.status(200).json(response.data);
     } catch (error) {
         res.status(500).json({ error: error.response?.data || "Nieznany błąd" });
