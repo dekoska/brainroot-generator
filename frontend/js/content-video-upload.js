@@ -69,9 +69,14 @@ async function uploadVideo(destination, uploadUrl = null) {
                 body: file,
             });
 
+            // if (!response.ok) {
+            //     throw new Error(`Błąd HTTP! status: ${response.status}`);
+            // }
             if (!response.ok) {
-                throw new Error(`Błąd HTTP! status: ${response.status}`);
+                const errorDetails = await response.text();
+                throw new Error(`Błąd HTTP! status: ${response.status}, szczegóły: ${errorDetails}`);
             }
+            
 
             console.log("Przesyłanie wideo zakończone sukcesem.");
         } catch (error) {
@@ -116,22 +121,34 @@ export function setupUploadButton(accessToken) {
             total_chunk_count: 1,
         };
 
+        // try {
+        //     // Przesyłanie pliku do Supabase
+        //     await uploadVideo("supabase");
+
+        //     // Inicjalizacja przesyłania na TikTok
+        //     const initResponse = await initVideoUpload(accessToken, postInfo, sourceInfo);
+
+        //     if (initResponse.data?.upload_url) {
+        //         // Przesyłanie wideo bezpośrednio do TikTok
+        //         await uploadVideo("direct", initResponse.data.upload_url);
+        //     } else {
+        //         throw new Error("Nie udało się uzyskać URL przesyłania.");
+        //     }
+
+        // } catch (error) {
+        //     console.error("Błąd podczas przesyłania wideo:", error);
+        // }
         try {
-            // Przesyłanie pliku do Supabase
-            await uploadVideo("supabase");
-
-            // Inicjalizacja przesyłania na TikTok
             const initResponse = await initVideoUpload(accessToken, postInfo, sourceInfo);
-
-            if (initResponse.data?.upload_url) {
-                // Przesyłanie wideo bezpośrednio do TikTok
+        
+            if (initResponse?.data?.upload_url) {
                 await uploadVideo("direct", initResponse.data.upload_url);
             } else {
                 throw new Error("Nie udało się uzyskać URL przesyłania.");
             }
-
         } catch (error) {
             console.error("Błąd podczas przesyłania wideo:", error);
         }
+        
     });
 }
