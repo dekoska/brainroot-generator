@@ -5,7 +5,7 @@ const { createClient } = require("@supabase/supabase-js");
 const router = express.Router();
 
 const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Konfiguracja multer do przechwytywania plików
