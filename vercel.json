@@ -11,6 +11,10 @@
       {
         "src": "/api/(.*)",
         "dest": "api/server.js"
+      },
+      {
+        "src": "/js/(.*)",
+        "dest": "/frontend/js/$1"
       }
     ],
     "crons": [
