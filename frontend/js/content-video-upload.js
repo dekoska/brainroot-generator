@@ -66,12 +66,12 @@ export function setupUploadButton(accessToken) {
         const videoSize = file.size;
 
         const postInfo = {
-            title: "Mój prywatny filmik na TikTok!",
-            privacy_level: "SELF_ONLY",
-            disable_duet: false,
-            disable_comment: false,
-            disable_stitch: false,
-            video_cover_timestamp_ms: 1000,
+            title: document.getElementById("title").value,
+            privacy_level: document.querySelector('input[name="privacy_level"]:checked'),
+            disable_duet: document.querySelector('input[name="duet_option"]:checked'),
+            disable_comment: document.querySelector('input[name="comment_option"]:checked'),
+            disable_stitch: document.querySelector('input[name="stitch_option"]:checked'),
+            video_cover_timestamp_ms: document.getElementById("duration").valueAsNumber
         };
         const sourceInfo = {
             source: "FILE_UPLOAD",
@@ -80,6 +80,7 @@ export function setupUploadButton(accessToken) {
             total_chunk_count: 1,
         };
 
+        console.log(postInfo);
         initVideoUpload(accessToken, postInfo, sourceInfo);
     });
 }

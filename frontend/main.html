@@ -6,11 +6,51 @@
     <title>Main page</title>
 </head>
 <body>
-    <h1>Prześlij wideo na TikTok:</h1>
+    <h1>Upload video on TikTok:</h1>
     <form id="upload-form">
-        <label for="video">Wybierz plik wideo:</label>
-        <input type="file" id="video" name="video" accept="video/*" required="">
-        <button type="submit">Content Creator API</button>
+            <label for="title">Tiktok title</label>
+            <input type="text" name="title" id="title">
+    
+            <div id="privacy_levels">
+                <legend>Privacy level:</legend>
+                <input type="radio" value="SELF_ONLY" id="self" name="privacy_level" required>
+                <label for="self">Self only</label>
+                <input type="radio" value="MUTUAL_FOLLOW_FRIENDS" id="mutual" name="privacy_level">
+                <label for="mutual">Mutual follow friends</label>
+                <input type="radio" value="PUBLIC_TO_EVERYONE" id="public" name="privacy_level">
+                <label for="public">Public to everyone</label>
+            </div>
+    
+            <div id="comment_options">
+                <legend>Comment option:</legend>
+                <input type="radio" value="false" id="com_disabled" name="comment_option" required>
+                <label for="com_disabled">Disabled</label>
+                <input type="radio" value="true" id="com_enabled" name="comment_option">
+                <label for="com_enabled">Enabled</label>
+            </div>
+    
+            <div id="duet_options">
+                <legend>Duet option:</legend>
+                <input type="radio" value="false" id="duet_disabled" name="duet_option" required>
+                <label for="duet_disabled">Disabled</label>
+                <input type="radio" value="true" id="duet_enabled" name="duet_option">
+                <label for="duet_enabled">Enabled</label>
+            </div>
+    
+            <div id="stitch_options"
+                <legend>Stitch option:</legend>
+                <input type="radio" value="false" id="stitch_disabled" name="stitch_option" required>
+                <label for="stitch_disabled">Disabled</label>
+                <input type="radio" value="true" id="stitch_enabled" name="stitch_option">
+                <label for="stitch_enabled">Enabled</label>
+            </div>
+    
+            <label for="duration">Max video post duration (sec):</label>
+            <input type="number" value="max_video_post_duration_sec" id="duration" max="600" required>
+    
+            <label for="video">Wybierz plik wideo:</label>
+            <input type="file" id="video" name="video" accept="video/*" required="">
+        <button type="submit">Upload</button>
     </form>
     <script type="module" src="main.js"></script>
 </body>
