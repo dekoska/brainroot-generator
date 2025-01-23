@@ -1,0 +1,17 @@
+moviepy
+pydantic
+praw
+pyttsx3
+langchain
+yt-dlp
+duckduckgo-search
+langchain-openai
+langchain-core
+langgraph
+openai-whisper
+pysrt
+fastapi
+pydantic
+uvicorn
+
+# pip install -r requirements.txt
