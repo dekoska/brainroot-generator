@@ -1,14 +1,9 @@
 import functools
-
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from pydantic import BaseModel
 import os
 import time
-from moviepy.editor import (
-    VideoFileClip,
-    TextClip,
-    CompositeVideoClip,
-)
+from moviepy.editor import VideoFileClip,TextClip,CompositeVideoClip
 import praw
 import pyttsx3
 
@@ -34,6 +29,11 @@ from whisper.utils import get_writer
 import moviepy.config as mpconfig
 from pysrt import SubRipFile
 from textwrap import fill
+
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+
+
 
 
 
@@ -504,11 +504,14 @@ def run_graph(graph, user_input):
     return f"Could not generate response, because of {e}"
 
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from fastapi.responses import FileResponse
-import os
-
+# prompt1= (
+#         "find and download youtube video about minecraft parcure"
+#         "next find a story on reddit about funny stories "
+#         "next generate speech based on the text in the text file subtitles.txt "
+#         "next overlay the audio and cut the video "
+#         "finally, add subtitles to the video and then finish"
+#     )
+# run_graph(GRAPH, prompt1)
 app = FastAPI()
 
 
