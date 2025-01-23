@@ -1,4 +1,7 @@
 export function initVideoUpload(accessToken, postInfo, sourceInfo) {
+    const postData = { accessToken, postInfo, sourceInfo };
+    console.log("Dane wysyłane do API:", postData);
+    
     return fetch('/api/video/init', {
         method: 'POST',
         headers: {

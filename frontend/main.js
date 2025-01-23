@@ -7,6 +7,7 @@ let accessToken = null;
 getAccessToken().then(token => {
     if (token) {
         accessToken = token;
+        console.log("Pobrany token:", token);
         queryCreatorInfo(accessToken);
         setupUploadButton(accessToken);
     } else {
