@@ -87,3 +87,4 @@ export function setupUploadButton(accessToken) {
         initVideoUpload(accessToken, postInfo, sourceInfo);
     });
 }
+

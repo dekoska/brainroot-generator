@@ -1,4 +1,3 @@
-// anti-forgery state token
 let array = new Uint8Array(30); 
 const csrfState = window.crypto.getRandomValues(array);
 
