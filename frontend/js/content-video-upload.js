@@ -1,7 +1,7 @@
 export function initVideoUpload(accessToken, postInfo, sourceInfo) {
     const postData = { accessToken, postInfo, sourceInfo };
     console.log("Dane wysyłane do API:", postData);
-    
+
     return fetch('/api/video/init', {
         method: 'POST',
         headers: {
@@ -70,11 +70,11 @@ export function setupUploadButton(accessToken) {
 
         const postInfo = {
             title: document.getElementById("title").value,
-            privacy_level: document.querySelector('input[name="privacy_level"]:checked'),
-            disable_duet: document.querySelector('input[name="duet_option"]:checked'),
-            disable_comment: document.querySelector('input[name="comment_option"]:checked'),
-            disable_stitch: document.querySelector('input[name="stitch_option"]:checked'),
-            video_cover_timestamp_ms: document.getElementById("duration").valueAsNumber
+            privacy_level: document.querySelector('input[name="privacy_level"]:checked').value,
+            disable_duet: document.querySelector('input[name="duet_option"]:checked').value,
+            disable_comment: document.querySelector('input[name="comment_option"]:checked').value,
+            disable_stitch: document.querySelector('input[name="stitch_option"]:checked').value,
+            video_cover_timestamp_ms: document.getElementById("duration").valueAsNumber,
         };
         const sourceInfo = {
             source: "FILE_UPLOAD",
