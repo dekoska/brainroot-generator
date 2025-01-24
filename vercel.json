@@ -20,7 +20,7 @@
       "dest": "/frontend/main.html"
     },
     {
-      "src": "/frontend/login",
+      "src": "frontend/login",
       "dest": "frontend/login.html"
     },
     {
