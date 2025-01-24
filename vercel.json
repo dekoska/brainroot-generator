@@ -1,27 +1,35 @@
 {
-    "routes": [
-      {
-        "src": "/frontend/main",
-        "dest": "/frontend/main.html"
-      },
-      {
-        "src": "/frontend/login",
-        "dest": "/frontend/login.html"
-      },
-      {
-        "src": "/api/(.*)",
-        "dest": "api/server.js"
-      },
-      {
-        "src": "/js/(.*)",
-        "dest": "/frontend/js/$1"
-      }
-    ],
-    "crons": [
-      {
-        "path": "/api/cleanup",
-        "schedule": "0 0 * * *"
-      }
-    ]
+  "version": 2,
+  "builds": [
+    {
+      "src": "python/app/main.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "api/server.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/python/(.*)",
+      "dest": "python/app/main.py"
+    },
+    {
+      "src": "/frontend/main",
+      "dest": "/frontend/main.html"
+    },
+    {
+      "src": "/frontend/login",
+      "dest": "/frontend/login.html"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "api/server.js"
+    },
+    {
+      "src": "/js/(.*)",
+      "dest": "/frontend/js/$1"
+    }
+  ]
 }
-   
