@@ -1,6 +1,5 @@
 import { getAccessToken } from './js/auth.js';
 import { queryCreatorInfo } from './js/creator-info.js';
-import { setupGenerateButton } from './js/generate-brainroot.js';
 import { setupUploadButton } from './js/content-video-upload.js';
 import { generateVideo } from './js/generate-brainroot.js';
 
