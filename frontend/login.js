@@ -36,7 +36,6 @@ console.log("State:", state);
 console.log("Code Verifier:", codeVerifier);
 console.log("Code Challenge:", codeChallenge); 
 
-// Konstrukcja linku OAuth
 function generateTikTokOAuthURL(clientKey, redirectURI, scope) {
     const baseURL = "https://www.tiktok.com/v2/auth/authorize/";
     const params = new URLSearchParams({
