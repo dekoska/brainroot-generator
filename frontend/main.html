@@ -6,9 +6,14 @@
     <title>Main page</title>
 </head>
 <body>
-    <h1>Generate your own braintook</h1>
-    <button id="generate">Generate</button>
-    <h1>Upload video on TikTok:</h1>
+    <h1>Generate Video</h1>
+    <form id="videoForm">
+        <label for="video_topic">Video Topic:</label>
+        <input type="text" id="video_topic" name="video_topic" required>
+        <label for="reddit_topic">Reddit Topic:</label>
+        <input type="text" id="reddit_topic" name="reddit_topic" required>
+        <button id="generate">Generate</button>
+        </form>
     <form id="upload-form">
             <label for="title">Tiktok title</label>
             <input type="text" name="title" id="title">
