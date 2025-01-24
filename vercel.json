@@ -21,7 +21,7 @@
     },
     {
       "src": "/frontend/login",
-      "dest": "/frontend/login.html"
+      "dest": "frontend/login.html"
     },
     {
       "src": "/api/(.*)",
