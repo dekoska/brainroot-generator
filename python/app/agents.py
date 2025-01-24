@@ -36,7 +36,13 @@ from textwrap import fill
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
-llm = ChatOpenAI(model="gpt-4o")
+# from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
+
+
+llm = ChatOpenAI(
+    model="gpt-4o"
+)
 
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
@@ -509,13 +515,13 @@ def run_graph(graph, user_input):
 #         "finally, add subtitles to the video and then finish"
 #     )
 # run_graph(GRAPH, prompt1)
-app = FastAPI()
+# app = FastAPI()
 
 
-# Model danych wejściowych
-class UserInput(BaseModel):
-    video_topic: str
-    reddit_topic: str
+# # Model danych wejściowych
+# class UserInput(BaseModel):
+#     video_topic: str
+#     reddit_topic: str
 
 
 def generate_prompt(video_topic: str, reddit_topic: str):
@@ -531,26 +537,26 @@ def generate_prompt(video_topic: str, reddit_topic: str):
     )
 
 
-@app.post("/generate_video")
-def generate_and_return_video(user_input: UserInput):
-    # Wygeneruj prompt
-    prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)
+# @app.post("/generate_video")
+# def generate_and_return_video(user_input: UserInput):
+#     # Wygeneruj prompt
+#     prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)
 
-    # Uruchom przepływ pracy
-    try:
-        result = run_graph(GRAPH, prompt)  # Zakładamy, że funkcja run_graph generuje wideo
-        output_file = "output_with_subtitles.mp4"
+#     # Uruchom przepływ pracy
+#     try:
+#         result = run_graph(GRAPH, prompt)  # Zakładamy, że funkcja run_graph generuje wideo
+#         output_file = "output_with_subtitles.mp4"
 
-        # Sprawdź, czy plik istnieje
-        if not os.path.exists(output_file):
-            raise HTTPException(status_code=500, detail="Plik wideo nie został wygenerowany.")
+#         # Sprawdź, czy plik istnieje
+#         if not os.path.exists(output_file):
+#             raise HTTPException(status_code=500, detail="Plik wideo nie został wygenerowany.")
 
-        return FileResponse(
-            path=output_file,
-            media_type="video/mp4",
-            filename="output_with_subtitles.mp4"
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+#         return FileResponse(
+#             path=output_file,
+#             media_type="video/mp4",
+#             filename="output_with_subtitles.mp4"
+#         )
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
 
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload

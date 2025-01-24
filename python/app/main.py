@@ -4,9 +4,17 @@ import os
 import asyncio
 from agents import run_graph, generate_prompt
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://brainroot-generator.vercel.app"], 
+    allow_credentials=True,
+    allow_methods=["*"], 
+    allow_headers=["*"], 
+)
 # Model danych wejściowych
 class UserInput(BaseModel):
     video_topic: str
@@ -14,6 +22,18 @@ class UserInput(BaseModel):
 
 VIDEO_OUTPUT_PATH = "output_with_subtitles.mp4"
 
+def generate_prompt(video_topic: str, reddit_topic: str):
+    """
+    Generuje prompt na podstawie wyborów użytkownika.
+    """
+    return (
+        f"find and download youtube video in good quality and without any subtitles on it about {video_topic} "
+        f"next find a story on reddit about {reddit_topic} "
+        "next generate speech based on the text in the text file subtitles.txt "
+        "next overlay the audio and cut the video "
+        "finally, add subtitles to the video and then finish"
+    )
+    
 # Funkcja do generowania wideo w tle
 async def generate_real_video(user_input: UserInput):
     prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)

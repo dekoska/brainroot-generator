@@ -21,5 +21,6 @@ openai-whisper
 pysrt
 fastapi
 uvicorn
+langchain-community
 
 # pip install -r requirements.txt
