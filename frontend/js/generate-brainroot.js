@@ -1,28 +1,38 @@
-document.getElementById("videoForm").addEventListener("submit", async function(event) {
-    event.preventDefault();
-
+export async function generateVideo() {
     const videoTopic = document.getElementById("video_topic").value;
     const redditTopic = document.getElementById("reddit_topic").value;
 
-    const response = await fetch("http://127.0.0.1:8000/generate_video", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            video_topic: videoTopic,
-            reddit_topic: redditTopic
-        })
-    });
-
-    const data = await response.json();
-    alert(data.message);
-
-    if (!response.ok) {
-        alert('Błąd podczas generowania wideo: ' + response.statusText);
+    if (!videoTopic.trim() || !redditTopic.trim()) {
+        alert("Proszę wprowadzić poprawne wartości tematów.");
         return;
     }
-});
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/generate_video", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                video_topic: videoTopic,
+                reddit_topic: redditTopic
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert('Błąd podczas generowania wideo: ' + data.detail);
+            return;
+        }
+
+        alert(data.message);
+    } catch (error) {
+        console.error("Błąd podczas wysyłania zapytania:", error);
+        alert("Wystąpił błąd podczas komunikacji z serwerem.");
+    }
+}
+
 
 // Funkcja do pobrania wygenerowanego wideo
 async function downloadVideo() {
