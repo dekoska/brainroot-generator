@@ -10,7 +10,6 @@ getAccessToken().then(token => {
         accessToken = token;
         console.log("Pobrany token:", token);
         queryCreatorInfo(accessToken);
-        setupGenerateButton();
         setupUploadButton(accessToken);
     } else {
         console.error("Nie udało się pobrać tokenu.");

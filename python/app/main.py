@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 import os
 import asyncio
-from agents import run_graph, generate_prompt
+from agents import run_graph, generate_prompt, GRAPH
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -39,13 +39,15 @@ async def generate_real_video(user_input: UserInput):
     prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)
 
     try:
-        await asyncio.to_thread(run_graph, prompt)
+        await asyncio.to_thread(run_graph, GRAPH, prompt)
 
         if not os.path.exists(VIDEO_OUTPUT_PATH):
             raise HTTPException(status_code=500, detail="Plik wideo nie został wygenerowany.")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error during video generation: {str(e)}")
+
+
 
 @app.post("/generate_video")
 async def generate_video(user_input: UserInput):
