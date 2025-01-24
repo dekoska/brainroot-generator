@@ -4,6 +4,7 @@ from pydantic import BaseModel
 import os
 import time
 from moviepy.editor import VideoFileClip,TextClip,CompositeVideoClip
+
 import praw
 import pyttsx3
 
@@ -34,12 +35,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
 
-
-
-
-
 llm = ChatOpenAI(model="gpt-4o")
-
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
 DO NOT ADD ANYTHING FROM YOURSELF
@@ -188,7 +184,7 @@ tts_agent_executor = AgentExecutor(agent=tts_agent, tools=tts_tools, verbose=Tru
 
 
 
-mpconfig.change_settings({'IMAGEMAGICK_BINARY': "C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
+# mpconfig.change_settings({'IMAGEMAGICK_BINARY': "C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
 
 video_edit_prompt = """DO NOT START UNTIL THE PREVIOUS AGENT FINISH
 You are a video editing agent.
