@@ -1,38 +1,47 @@
-# from fastapi import FastAPI, UploadFile, File
-# from fastapi.responses import JSONResponse
-# import os
-
-# app = FastAPI()
-
-# UPLOAD_FOLDER = "uploaded_videos"
-# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-# @app.get("/")
-# def root():
-#     return {"message": "Backend działa pod ścieżką /python/"}
-
-# @app.post("/upload/")
-# async def upload_video(file: UploadFile = File(...)):
-#     file_location = f"{UPLOAD_FOLDER}/{file.filename}"
-#     with open(file_location, "wb") as f:
-#         f.write(await file.read())
-#     return JSONResponse(content={"message": "Plik przesłany pomyślnie!", "filename": file.filename})
-
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from agents import generate_and_return_video
+import os
+import asyncio
+from agents import run_graph, generate_prompt
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
-@app.get("/")
-def read_root():
-    return {"message": "API is running!"}
-
+# Model danych wejściowych
 class UserInput(BaseModel):
     video_topic: str
     reddit_topic: str
-    
-# Endpoint do generowania wideo
+
+VIDEO_OUTPUT_PATH = "output_with_subtitles.mp4"
+
+# Funkcja do generowania wideo w tle
+async def generate_real_video(user_input: UserInput):
+    prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)
+
+    try:
+        await asyncio.to_thread(run_graph, prompt)
+
+        if not os.path.exists(VIDEO_OUTPUT_PATH):
+            raise HTTPException(status_code=500, detail="Plik wideo nie został wygenerowany.")
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error during video generation: {str(e)}")
+
 @app.post("/generate_video")
-def generate_video(user_input: UserInput):
-    return generate_and_return_video(user_input)
+async def generate_video(user_input: UserInput):
+    """
+    Endpoint do rozpoczęcia generowania wideo.
+    Generacja wideo odbywa się asynchronicznie w tle.
+    """
+    asyncio.create_task(generate_real_video(user_input))
+    return {"message": "Video generation started", "filename": VIDEO_OUTPUT_PATH}
+
+@app.get("/download_video")
+async def download_video():
+    """
+    Endpoint do pobrania wygenerowanego pliku wideo.
+    """
+    if os.path.exists(VIDEO_OUTPUT_PATH):
+        return FileResponse(VIDEO_OUTPUT_PATH, media_type='video/mp4', filename="generated_video.mp4")
+    else:
+        raise HTTPException(status_code=404, detail="File not found")

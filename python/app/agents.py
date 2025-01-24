@@ -1,4 +1,6 @@
 import functools
+import sys
+
 from moviepy.audio.io.AudioFileClip import AudioFileClip
 from pydantic import BaseModel
 import os
@@ -34,8 +36,8 @@ from textwrap import fill
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
-
 llm = ChatOpenAI(model="gpt-4o")
+
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
 DO NOT ADD ANYTHING FROM YOURSELF
@@ -161,7 +163,7 @@ def text_to_speech_tool(file_path: str = "subtitles.txt"):
                 engine.setProperty('voice', voice.id)
                 break
 
-        engine.save_to_file(text, filename)
+        # engine.save_to_file(text, filename)
         engine.runAndWait()
 
         return f"Audio saved to {filename}"
@@ -282,6 +284,7 @@ def save_file(results, format='srt'):
     writer = get_writer(format, output_dir)
     writer(results, f'transcribe.{format}')
 
+import sys
 @tool
 def add_subtitles_tool(
     input_video: str = "output_final.mp4",
@@ -291,22 +294,27 @@ def add_subtitles_tool(
     Adds subtitles from a transcribed MP3 file to a video and saves the result.
     """
     audio_path = 'output.mp3'
-    output_dir = 'output'
 
-    print(f"Sprawdzanie pliku: {audio_path}")
+    output_dir = 'output'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"Utworzono katalog: {output_dir}")
+
     if not os.path.isfile(audio_path):
         return f"Plik audio nie istnieje: {audio_path}"
-
-    print(f"Plik audio znaleziony: {audio_path}")
+    else: print(f"Plik audio znaleziony: {audio_path}")
 
     # Transcribe audio and save subtitles
     try:
         result = get_transcribe(audio=audio_path)
-        print('-' * 50)
-        print(result.get('text', ''))
-        save_file(result, 'srt')
+        if result and 'text' in result:
+            print("Transkrypcja zakończona sukcesem.")
+            save_file(result, 'srt')
+        else:
+            return "Błąd: Transkrypcja nie zwróciła żadnych wyników."
     except Exception as e:
         return f"Błąd podczas transkrypcji: {e}"
+        sys.exit(1)
 
     subtitles_path = os.path.join(output_dir, 'transcribe.srt')
 
@@ -315,11 +323,7 @@ def add_subtitles_tool(
 
     try:
         video_clip = VideoFileClip(input_video)
-
         subtitles = SubRipFile.open(subtitles_path)
-
-
-
         subtitle_clips = []
         max_width = 30
 
@@ -400,9 +404,6 @@ prompt = ChatPromptTemplate.from_messages(
         ),
     ]
 )
-
-
-
 
 
 class RouteResponse(BaseModel):
@@ -501,7 +502,7 @@ def run_graph(graph, user_input):
 
 
 # prompt1= (
-#         "find and download youtube video about minecraft parcure"
+#         "find and download youtube video about minecraft parkure"
 #         "next find a story on reddit about funny stories "
 #         "next generate speech based on the text in the text file subtitles.txt "
 #         "next overlay the audio and cut the video "
@@ -522,7 +523,7 @@ def generate_prompt(video_topic: str, reddit_topic: str):
     Generuje prompt na podstawie wyborów użytkownika.
     """
     return (
-        f"find and download youtube video about {video_topic} "
+        f"find and download youtube video in good quality and without any subtitles on it about {video_topic} "
         f"next find a story on reddit about {reddit_topic} "
         "next generate speech based on the text in the text file subtitles.txt "
         "next overlay the audio and cut the video "
@@ -551,3 +552,5 @@ def generate_and_return_video(user_input: UserInput):
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# uvicorn main:app --host 0.0.0.0 --port 8000 --reload

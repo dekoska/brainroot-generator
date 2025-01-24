@@ -1,46 +1,50 @@
 export function setupGenerateButton() {
-    document.getElementById('generate').addEventListener('click', async (e) => {
-        e.preventDefault();
-
-        let formData = new FormData();
-        const videoFile = document.getElementById('video').files[0];
-
-        if (!videoFile) {
-            alert("Proszę wybrać plik wideo przed przesłaniem.");
-            return;
-        }
-
-        formData.append("file", videoFile);
-
+    document.getElementById('generate').addEventListener('click', async () => {
         try {
-            const uploadResponse = await fetch('https://brainroot-generator.vercel.app/python/upload/', {
+            // Wywołanie backendu do generowania wideo
+            const response = await fetch('http://localhost:8000/generate_video', {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' }
             });
 
-            const uploadResult = await uploadResponse.json();
-
-            if (uploadResponse.ok) {
-                console.log("Przesyłanie zakończone sukcesem: " + uploadResult.filename);
-
-                const checkResponse = await fetch(`https://brainroot-generator.vercel.app/python/check-file?filename=${uploadResult.filename}`);
-                const checkResult = await checkResponse.json();
-
-                if (checkResponse.ok && checkResult.exists) {
-                    console.log("Video znajduje się w folderze: " + uploadResult.filename);
-                    alert("Plik zapisany pomyślnie!");
-                } else {
-                    console.error("Nie znaleziono pliku na serwerze.");
-                    alert("Wystąpił problem z zapisem pliku.");
-                }
-            } else {
-                console.error('Błąd przesyłania:', uploadResult.message);
-                alert("Przesyłanie nie powiodło się: " + uploadResult.message);
+            if (!response.ok) {
+                throw new Error('Błąd podczas generowania wideo');
             }
 
+            const result = await response.json();
+            console.log('Wideo wygenerowane:', result.filename);
+
+            // Pobieranie pliku po wygenerowaniu
+            downloadVideo();
         } catch (error) {
-            console.error('Błąd przesyłania:', error);
-            alert("Przesyłanie nie powiodło się.");
+            console.error('Błąd:', error);
+            alert('Wystąpił błąd podczas generowania wideo.');
         }
     });
+}
+
+// Funkcja do pobrania wygenerowanego wideo
+async function downloadVideo() {
+    try {
+        const downloadResponse = await fetch('http://localhost:8000/download_video/');
+
+        if (!downloadResponse.ok) {
+            throw new Error('Błąd podczas pobierania pliku');
+        }
+
+        const blob = await downloadResponse.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        // Tworzenie linku do pobrania
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'generated_video.mp4';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        console.log('Pobieranie zakończone');
+    } catch (error) {
+        console.error('Błąd pobierania:', error);
+    }
 }
