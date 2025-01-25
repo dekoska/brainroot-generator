@@ -16,28 +16,32 @@ getAccessToken().then(token => {
     }
 });
 
-document.getElementById("videoForm").addEventListener("submit", async function(event) {
+document.getElementById("videoForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
+    const flag = false;
     const button = document.getElementById("generate");
-    button.disabled = true; 
+    button.disabled = true;
     button.textContent = "Generating...";
 
-    try {
-        const response = await generateVideo();
-        if (!response.ok) {
-            throw new Error("Błąd podczas generowania wideo: " + response.statusText);
+    if (!flag) {
+        try {
+            const response = await generateVideo();
+            if (!response.ok) {
+                throw new Error("Błąd podczas generowania wideo: " + response.statusText);
+            }
+
+            // alert("Video generation started. Please wait...");
+
+            await checkVideoReady();
+            await downloadVideo();
+            flag = true;
+        } catch (error) {
+            // alert("Wystąpił błąd podczas generowania wideo: " + error.message);
+        } finally {
+            button.disabled = false;
+            button.textContent = "Generate";
         }
-
-        alert("Video generation started. Please wait...");
-
-        await checkVideoReady();
-        await downloadVideo();
-    } catch (error) {
-        alert("Wystąpił błąd podczas generowania wideo: " + error.message);
-    } finally {
-        button.disabled = false;
-        button.textContent = "Generate";
     }
 });
 

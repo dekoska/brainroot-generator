@@ -20,7 +20,7 @@ class UserInput(BaseModel):
     video_topic: str
     reddit_topic: str
 
-VIDEO_OUTPUT_PATH = "output_with_subtitles.mp4"
+VIDEO_OUTPUT_PATH = "final_output_with_subtitles.mp4"
 
 def generate_prompt(video_topic: str, reddit_topic: str):
     """

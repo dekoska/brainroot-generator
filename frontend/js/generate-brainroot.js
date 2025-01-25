@@ -2,10 +2,6 @@ export async function generateVideo() {
     const videoTopic = document.getElementById("video_topic").value;
     const redditTopic = document.getElementById("reddit_topic").value;
 
-    if (!videoTopic.trim() || !redditTopic.trim()) {
-        alert("Proszę wprowadzić poprawne wartości tematów.");
-        return;
-    }
 
     try {
         const response = await fetch("http://127.0.0.1:8000/generate_video", {
@@ -25,8 +21,9 @@ export async function generateVideo() {
             alert('Błąd podczas generowania wideo: ' + data.detail);
             return;
         }
-
         alert(data.message);
+
+        await downloadVideo()
     } catch (error) {
         console.error("Błąd podczas wysyłania zapytania:", error);
         alert("Wystąpił błąd podczas komunikacji z serwerem.");
@@ -49,7 +46,7 @@ async function downloadVideo() {
         // Tworzenie linku do pobrania
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'generated_video.mp4';
+        a.download = 'final_output_with_subtitles.mp4';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
