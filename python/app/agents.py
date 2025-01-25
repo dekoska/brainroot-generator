@@ -426,7 +426,13 @@ def supervisor_node(state):
         print("Process completed successfully.")
         return {"next": "FINISH"}
     
+    # Ensure agents don't run multiple times
+    if state.get("executed_agents") and result.next in state["executed_agents"]:
+        return {"next": "FINISH"}
+
+    state.setdefault("executed_agents", []).append(result.next)
     return result
+
 
 
 def agent_node(state, agent, name):

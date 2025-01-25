@@ -19,31 +19,27 @@ getAccessToken().then(token => {
 document.getElementById("videoForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
-    const flag = false;
     const button = document.getElementById("generate");
     button.disabled = true;
     button.textContent = "Generating...";
 
-    if (!flag) {
-        try {
-            const response = await generateVideo();
-            if (!response.ok) {
-                throw new Error("Błąd podczas generowania wideo: " + response.statusText);
-            }
-
-            // alert("Video generation started. Please wait...");
-
-            await checkVideoReady();
-            downloadVideo();
-            flag = true;
-        } catch (error) {
-            // alert("Wystąpił błąd podczas generowania wideo: " + error.message);
-        } finally {
-            button.disabled = false;
-            button.textContent = "Generate";
+    try {
+        const response = await generateVideo();
+        if (!response.ok) {
+            throw new Error("Error generating video: " + response.statusText);
         }
+
+        console.log("Video generation started. Checking availability...");
+        await checkVideoReady();
+        downloadVideo();  // Ensure this function runs after successful check
+    } catch (error) {
+        console.error("Error during video generation:", error);
+    } finally {
+        button.disabled = false;
+        button.textContent = "Generate";
     }
 });
+
 
 async function checkVideoReady() {
     let videoReady = false;
