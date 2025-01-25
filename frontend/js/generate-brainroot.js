@@ -46,7 +46,7 @@ async function downloadVideo() {
         // Tworzenie linku do pobrania
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'final_output_with_subtitles.mp4';
+        a.download = 'output_with_subtitles.mp4';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
