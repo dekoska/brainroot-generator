@@ -1,4 +1,4 @@
-import { checkVideoReady } from '.main.js';
+import { checkVideoReady } from '../main.js';
 
 export async function generateVideo() {
     const videoTopic = document.getElementById("video_topic").value;
