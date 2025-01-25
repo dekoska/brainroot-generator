@@ -1,21 +1,23 @@
 import { getAccessToken } from './js/auth.js';
 import { queryCreatorInfo } from './js/creator-info.js';
 import { setupUploadButton } from './js/content-video-upload.js';
-import { generateVideo } from './js/generate-brainroot.js';
+import { generateVideo } from './generate-brainroot.js';
 
 let accessToken = null;
 
+// Get authentication token and setup functionalities
 getAccessToken().then(token => {
     if (token) {
         accessToken = token;
-        console.log("Pobrany token:", token);
+        console.log("Token acquired:", token);
         queryCreatorInfo(accessToken);
         setupUploadButton(accessToken);
     } else {
-        console.error("Nie udało się pobrać tokenu.");
+        console.error("Failed to fetch token.");
     }
 });
 
+// Handle form submission
 document.getElementById("videoForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -24,14 +26,10 @@ document.getElementById("videoForm").addEventListener("submit", async function (
     button.textContent = "Generating...";
 
     try {
-        const response = await generateVideo();
-        if (!response.ok) {
-            throw new Error("Error generating video: " + response.statusText);
-        }
-
+        await generateVideo();
         console.log("Video generation started. Checking availability...");
         await checkVideoReady();
-        await downloadVideo();  // Ensure download happens after checking
+        downloadVideo(); 
     } catch (error) {
         console.error("Error during video generation:", error);
     } finally {
@@ -40,11 +38,38 @@ document.getElementById("videoForm").addEventListener("submit", async function (
     }
 });
 
+// Check if the video is ready for download
+async function checkVideoReady() {
+    let videoReady = false;
+    const maxRetries = 30;  // Retry 30 times with 5 seconds interval
+    let attempts = 0;
+
+    while (!videoReady && attempts < maxRetries) {
+        try {
+            const response = await fetch("http://127.0.0.1:8000/download_video");
+            if (response.ok) {
+                videoReady = true;
+                console.log("Video is ready for download.");
+                return true;
+            } else {
+                console.log(`Attempt ${attempts + 1}: Video not ready yet...`);
+                await new Promise(resolve => setTimeout(resolve, 5000));
+                attempts++;
+            }
+        } catch (error) {
+            console.error("Error checking video status:", error);
+        }
+    }
+
+    throw new Error("Video was not generated within the expected time.");
+}
+
+// Download the generated video
 async function downloadVideo() {
     try {
         const link = document.createElement("a");
-        link.href = "http://127.0.0.1:8000/download_video";  // Ensure server endpoint is correct
-        link.download = "generated_video.mp4";  // Set desired filename
+        link.href = "http://127.0.0.1:8000/download_video";
+        link.download = "generated_video.mp4";
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -53,27 +78,5 @@ async function downloadVideo() {
         console.error("Error during download:", error);
     }
 }
-
-async function checkVideoReady() {
-    let videoReady = false;
-    const maxRetries = 30;  // 30 attempts, 5 seconds each
-    let attempts = 0;
-
-    while (!videoReady && attempts < maxRetries) {
-        const response = await fetch("http://127.0.0.1:8000/download_video");
-        if (response.ok) {
-            videoReady = true;
-            console.log("Video is ready for download.");
-            return true;
-        } else {
-            console.log(`Attempt ${attempts + 1}: Video not ready yet...`);
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            attempts++;
-        }
-    }
-
-    throw new Error("Video was not generated within the expected time.");
-}
-
 
 export { checkVideoReady };
