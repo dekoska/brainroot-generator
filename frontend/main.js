@@ -25,22 +25,42 @@ document.getElementById("videoForm").addEventListener("submit", async function(e
 
     try {
         const response = await generateVideo();
-        const data = await response.json();
-
-        if (response.ok) {
-            alert(data.message);
-            
-            await checkVideoReady();
-            await downloadVideo();
-        } else {
-            alert("Błąd podczas generowania wideo: " + data.detail);
+        if (!response.ok) {
+            throw new Error("Błąd podczas generowania wideo: " + response.statusText);
         }
+
+        alert("Video generation started. Please wait...");
+
+        await checkVideoReady();
+        await downloadVideo();
     } catch (error) {
-        alert("Wystąpił błąd podczas generowania wideo");
+        alert("Wystąpił błąd podczas generowania wideo: " + error.message);
     } finally {
         button.disabled = false;
         button.textContent = "Generate";
     }
 });
+
+async function checkVideoReady() {
+    let videoReady = false;
+    const maxRetries = 30;  // Maksymalna liczba prób (30 prób co 5 sekundy = 2,5 minuty)
+    let attempts = 0;
+
+    while (!videoReady && attempts < maxRetries) {
+        const response = await fetch("http://127.0.0.1:8000/download_video");
+        if (response.ok) {
+            videoReady = true;
+            console.log("Plik wideo jest gotowy.");
+        } else {
+            console.log(`Próba ${attempts + 1}: Plik wciąż nie jest gotowy...`);
+            await new Promise(resolve => setTimeout(resolve, 5000)); // Oczekiwanie 5 sekund
+            attempts++;
+        }
+    }
+
+    if (!videoReady) {
+        throw new Error("Plik wideo nie został wygenerowany w oczekiwanym czasie.");
+    }
+}
 
 

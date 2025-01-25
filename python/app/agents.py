@@ -418,9 +418,16 @@ class RouteResponse(BaseModel):
 supervisor_chain = prompt | llm.with_structured_output(RouteResponse)
 
 def supervisor_node(state):
+    print("Supervisor received state:", state)
+    result = supervisor_chain.invoke(state)
+    print("Supervisor decided next step:", result.next)
 
-  result = supervisor_chain.invoke(state)
-  return result
+    if result.next == "FINISH":
+        print("Process completed successfully.")
+        return {"next": "FINISH"}
+    
+    return result
+
 
 def agent_node(state, agent, name):
 
@@ -488,23 +495,27 @@ WORKFLOW.add_edge("FINISH", END)
 GRAPH = WORKFLOW.compile()
 
 def run_graph(graph, user_input):
-  config = {"configurable": {"thread_id": "2"}}
-  try:
-    result = graph.invoke(
-        {
-            "messages": [
-                HumanMessage(
-                    user_input,
-                    id=str(time.time())
-                )
-            ]
-        }
-        , config=config)
-    result = result["messages"][-1].content
+    config = {"configurable": {"thread_id": "2"}}
+    try:
+        result = graph.invoke(
+            {
+                "messages": [
+                    HumanMessage(
+                        user_input,
+                        id=str(time.time())
+                    )
+                ]
+            }
+            , config=config)
+        
+        if result["messages"][-1].content == "FINISH":
+            print("Process finished successfully.")
+            return "Process completed"
+        
+        return "Unexpected result"
+    except Exception as e:
+        return f"Could not generate response, because of {e}"
 
-    return result
-  except Exception as e:
-    return f"Could not generate response, because of {e}"
 
 
 # prompt1= (
