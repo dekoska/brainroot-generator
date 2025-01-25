@@ -30,14 +30,14 @@ export async function generateVideo() {
     }
 }
 
-async function downloadVideo() {
-    const link = document.createElement("a");
-    link.href = "http://127.0.0.1:8000/download_video";
-    link.download = "generated_video.mp4";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-}
+// async function downloadVideo() {
+//     const link = document.createElement("a");
+//     link.href = "http://127.0.0.1:8000/download_video";
+//     link.download = "generated_video.mp4";
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+// }
 
 
 // Funkcja do pobrania wygenerowanego wideo

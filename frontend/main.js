@@ -31,7 +31,7 @@ document.getElementById("videoForm").addEventListener("submit", async function (
 
         console.log("Video generation started. Checking availability...");
         await checkVideoReady();
-        downloadVideo();  // Ensure this function runs after successful check
+        await downloadVideo();  // Ensure download happens after checking
     } catch (error) {
         console.error("Error during video generation:", error);
     } finally {
@@ -39,6 +39,21 @@ document.getElementById("videoForm").addEventListener("submit", async function (
         button.textContent = "Generate";
     }
 });
+
+async function downloadVideo() {
+    try {
+        const link = document.createElement("a");
+        link.href = "http://127.0.0.1:8000/download_video";  // Ensure server endpoint is correct
+        link.download = "generated_video.mp4";  // Set desired filename
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        console.log("Download initiated successfully.");
+    } catch (error) {
+        console.error("Error during download:", error);
+    }
+}
+
 
 
 async function checkVideoReady() {
