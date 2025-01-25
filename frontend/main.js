@@ -1,7 +1,7 @@
 import { getAccessToken } from './js/auth.js';
 import { queryCreatorInfo } from './js/creator-info.js';
 import { setupUploadButton } from './js/content-video-upload.js';
-import { generateVideo } from './generate-brainroot.js';
+import { generateVideo } from './js/generate-brainroot.js';
 
 let accessToken = null;
 
