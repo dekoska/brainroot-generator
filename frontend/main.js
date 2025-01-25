@@ -76,3 +76,4 @@ async function checkVideoReady() {
 }
 
 
+export { checkVideoReady };
