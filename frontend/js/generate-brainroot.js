@@ -1,3 +1,5 @@
+import { checkVideoReady } from './main.js';
+
 export async function generateVideo() {
     const videoTopic = document.getElementById("video_topic").value;
     const redditTopic = document.getElementById("reddit_topic").value;
@@ -14,24 +16,25 @@ export async function generateVideo() {
             })
         });
 
-        const data = await response.json();
-
         if (!response.ok) {
-            alert('Error generating video: ' + data.detail);
+            const errorData = await response.json();
+            alert('Błąd podczas generowania wideo: ' + (errorData.detail || response.statusText));
             return;
         }
+
+        const data = await response.json();
         alert(data.message);
 
         console.log("Checking video availability...");
-
         await checkVideoReady();
         await downloadVideo();
 
     } catch (error) {
         console.error("Error sending request:", error);
-        alert("An error occurred while communicating with the server.");
+        alert("Wystąpił błąd podczas komunikacji z serwerem.");
     }
 }
+
 
 // async function downloadVideo() {
 //     const link = document.createElement("a");
