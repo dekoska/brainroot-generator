@@ -52,7 +52,7 @@ async def generate_real_video(user_input: UserInput):
 @app.post("/generate_video")
 async def generate_video(user_input: UserInput):
     await generate_real_video(user_input)
-    
+
     return {"message": "Video generation started", "filename": VIDEO_OUTPUT_PATH}
 
 @app.get("/download_video")

@@ -30,29 +30,32 @@ export async function generateVideo() {
     }
 }
 
+function downloadVideo() {
+    window.location.href = "http://localhost:8000/download_video";
+}
 
 // Funkcja do pobrania wygenerowanego wideo
-async function downloadVideo() {
-    try {
-        const downloadResponse = await fetch('http://localhost:8000/download_video/');
+// async function downloadVideo() {
+//     try {
+//         const downloadResponse = await fetch('http://localhost:8000/download_video/');
 
-        if (!downloadResponse.ok) {
-            throw new Error('Błąd podczas pobierania pliku');
-        }
+//         if (!downloadResponse.ok) {
+//             throw new Error('Błąd podczas pobierania pliku');
+//         }
 
-        const blob = await downloadResponse.blob();
-        const url = window.URL.createObjectURL(blob);
+//         const blob = await downloadResponse.blob();
+//         const url = window.URL.createObjectURL(blob);
 
-        // Tworzenie linku do pobrania
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'output_with_subtitles.mp4';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
+//         // Tworzenie linku do pobrania
+//         const a = document.createElement('a');
+//         a.href = url;
+//         a.download = 'output_with_subtitles.mp4';
+//         document.body.appendChild(a);
+//         a.click();
+//         document.body.removeChild(a);
 
-        console.log('Pobieranie zakończone');
-    } catch (error) {
-        console.error('Błąd pobierania:', error);
-    }
-}
+//         console.log('Pobieranie zakończone');
+//     } catch (error) {
+//         console.error('Błąd pobierania:', error);
+//     }
+// }
