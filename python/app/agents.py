@@ -40,10 +40,6 @@ from fastapi.responses import FileResponse
 from langchain_openai import ChatOpenAI
 
 
-llm = ChatOpenAI(
-    model="gpt-4o"
-)
-
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
 DO NOT ADD ANYTHING FROM YOURSELF
@@ -419,23 +415,23 @@ supervisor_chain = prompt | llm.with_structured_output(RouteResponse)
 
 def supervisor_node(state):
     print("Supervisor received state:", state)
+    
+    # Keep track of executed agents
+    if "executed_agents" not in state:
+        state["executed_agents"] = set()
+    
     result = supervisor_chain.invoke(state)
     print("Supervisor decided next step:", result.next)
 
-    if result.next == "FINISH":
+    if result.next == "FINISH" or result.next in state["executed_agents"]:
         print("Process completed successfully.")
         return {"next": "FINISH"}
-    
-    # Avoid duplicate agent execution
-    if "executed_agents" not in state:
-        state["executed_agents"] = set()
 
-    if result.next in state["executed_agents"]:
-        print(f"Agent {result.next} has already been executed, stopping process.")
-        return {"next": "FINISH"}
-
+    # Add executed agent to the tracking list
     state["executed_agents"].add(result.next)
+
     return result
+
 
 
 

@@ -2,7 +2,6 @@ export async function generateVideo() {
     const videoTopic = document.getElementById("video_topic").value;
     const redditTopic = document.getElementById("reddit_topic").value;
 
-
     try {
         const response = await fetch("http://127.0.0.1:8000/generate_video", {
             method: "POST",
@@ -18,15 +17,19 @@ export async function generateVideo() {
         const data = await response.json();
 
         if (!response.ok) {
-            alert('Błąd podczas generowania wideo: ' + data.detail);
+            alert('Error generating video: ' + data.detail);
             return;
         }
         alert(data.message);
 
-        await downloadVideo()
+        console.log("Checking video availability...");
+
+        await checkVideoReady();
+        await downloadVideo();
+
     } catch (error) {
-        console.error("Błąd podczas wysyłania zapytania:", error);
-        alert("Wystąpił błąd podczas komunikacji z serwerem.");
+        console.error("Error sending request:", error);
+        alert("An error occurred while communicating with the server.");
     }
 }
 

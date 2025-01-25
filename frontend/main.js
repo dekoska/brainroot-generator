@@ -54,28 +54,25 @@ async function downloadVideo() {
     }
 }
 
-
-
 async function checkVideoReady() {
     let videoReady = false;
-    const maxRetries = 30;  // Maksymalna liczba prób (30 prób co 5 sekundy = 2,5 minuty)
+    const maxRetries = 30;  // 30 attempts, 5 seconds each
     let attempts = 0;
 
     while (!videoReady && attempts < maxRetries) {
         const response = await fetch("http://127.0.0.1:8000/download_video");
         if (response.ok) {
             videoReady = true;
-            console.log("Plik wideo jest gotowy.");
+            console.log("Video is ready for download.");
+            return true;
         } else {
-            console.log(`Próba ${attempts + 1}: Plik wciąż nie jest gotowy...`);
-            await new Promise(resolve => setTimeout(resolve, 5000)); // Oczekiwanie 5 sekund
+            console.log(`Attempt ${attempts + 1}: Video not ready yet...`);
+            await new Promise(resolve => setTimeout(resolve, 5000));
             attempts++;
         }
     }
 
-    if (!videoReady) {
-        throw new Error("Plik wideo nie został wygenerowany w oczekiwanym czasie.");
-    }
+    throw new Error("Video was not generated within the expected time.");
 }
 
 
