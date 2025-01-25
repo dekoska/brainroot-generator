@@ -24,7 +24,7 @@ document.getElementById("videoForm").addEventListener("submit", async function (
     button.disabled = true;
     button.textContent = "Generating...";
 
-    if (!flag) {
+    // if (!flag) {
         try {
             const response = await generateVideo();
             if (!response.ok) {
@@ -35,7 +35,7 @@ document.getElementById("videoForm").addEventListener("submit", async function (
 
             await checkVideoReady();
             await downloadVideo();
-            flag = true;
+            // flag = true;
         } catch (error) {
             // alert("Wystąpił błąd podczas generowania wideo: " + error.message);
         } finally {
@@ -43,7 +43,7 @@ document.getElementById("videoForm").addEventListener("submit", async function (
             button.textContent = "Generate";
         }
     }
-});
+);
 
 async function checkVideoReady() {
     let videoReady = false;
