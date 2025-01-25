@@ -55,6 +55,8 @@ async def generate_video(user_input: UserInput):
     Endpoint do rozpoczęcia generowania wideo.
     Generacja wideo odbywa się asynchronicznie w tle.
     """
+    asyncio.create_task(generate_real_video(user_input))
+     
     return {"message": "Video generation started", "filename": VIDEO_OUTPUT_PATH}
 
 @app.get("/download_video")
@@ -66,3 +68,4 @@ async def download_video():
         return FileResponse(VIDEO_OUTPUT_PATH, media_type='video/mp4', filename="generated_video.mp4")
     else:
         raise HTTPException(status_code=404, detail="File not found")
+    

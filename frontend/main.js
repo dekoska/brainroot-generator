@@ -20,13 +20,25 @@ document.getElementById("videoForm").addEventListener("submit", async function(e
     event.preventDefault();
 
     const button = document.getElementById("generate");
-    button.disabled = true;
+    button.disabled = true; 
     button.textContent = "Generating...";
 
     try {
-        await generateVideo();
+        const response = await generateVideo();
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(data.message);
+            
+            await checkVideoReady();
+            await downloadVideo();
+        } else {
+            alert("Błąd podczas generowania wideo: " + data.detail);
+        }
+    } catch (error) {
+        alert("Wystąpił błąd podczas generowania wideo");
     } finally {
-        button.disabled = false; 
+        button.disabled = false;
         button.textContent = "Generate";
     }
 });
