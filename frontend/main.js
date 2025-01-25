@@ -16,8 +16,19 @@ getAccessToken().then(token => {
     }
 });
 
-document.getElementById("videoForm").addEventListener("submit", function(event) {
+document.getElementById("videoForm").addEventListener("submit", async function(event) {
     event.preventDefault();
-    generateVideo();
+
+    const button = document.getElementById("generate");
+    button.disabled = true;
+    button.textContent = "Generating...";
+
+    try {
+        await generateVideo();
+    } finally {
+        button.disabled = false; 
+        button.textContent = "Generate";
+    }
 });
+
 
