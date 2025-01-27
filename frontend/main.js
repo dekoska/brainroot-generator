@@ -23,7 +23,7 @@ document.getElementById("videoForm").addEventListener("submit", async function (
 
     const button = document.getElementById("generate");
     button.disabled = true;
-    button.textContent = "Generating...";
+    button.textContent = "Generating...";      
 
     try {
         await generateVideo();
