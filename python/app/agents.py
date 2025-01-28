@@ -5,12 +5,12 @@ from moviepy.audio.io.AudioFileClip import AudioFileClip
 from pydantic import BaseModel
 import os
 import time
-from moviepy.editor import VideoFileClip,TextClip,CompositeVideoClip
+from moviepy.editor import VideoFileClip, TextClip, CompositeVideoClip
 
 import praw
 import pyttsx3
 
-from langchain.schema import  HumanMessage, AIMessage
+from langchain.schema import HumanMessage, AIMessage
 
 from langgraph.constants import END, START
 
@@ -40,6 +40,7 @@ from fastapi.responses import FileResponse
 from langchain_openai import ChatOpenAI
 
 
+
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
 DO NOT ADD ANYTHING FROM YOURSELF
@@ -48,11 +49,13 @@ ONLY download the video based on the exact details provided.
 If you cannot find or download the video, clearly state the issue and finish without taking any further action.
 Always document the exact source of the video you are downloading."""
 
+
 @tool
 def search_videos_youtube(query: Annotated[str, 'A query to search YouTube videos with']):
     """This tool uses DuckDuckGo to retrieve a YouTube video for download based on a query."""
     result = DDGS().videos(query, max_results=1)
     return str(result)
+
 
 @tool
 def download_youtube_videos(url: str, download_path: str = "./") -> str:
@@ -68,6 +71,7 @@ def download_youtube_videos(url: str, download_path: str = "./") -> str:
         return f"Video downloaded to {download_path}"
     except Exception as e:
         return f"Error: {e}"
+
 
 video_tools = [search_videos_youtube, download_youtube_videos]
 
@@ -95,6 +99,7 @@ You ALWAYS quote sources in your responses and provide a link to the original po
 DO NOT make any assumptions or add extra information.
 DO NOT summarise the post
 If no relevant post is found, clearly state this and stop."""
+
 
 @tool
 def search_reddit_posts_tool(query: Annotated[str, "Query for searching Reddit posts"]):
@@ -135,7 +140,7 @@ reddit_agent_executor = AgentExecutor(agent=reddit_agent, tools=reddit_tools, ve
 
 tts_prompt = """DO NOT START UNTIL THE PREVIOUS AGENT FINISH.
 You are a Text-to-Speech (TTS) agent.
-Your task is to read the text from the text file provided by the user and save it as an audio file.
+Your task is to read the text from the text file provided by the user and save it as output.mp3.
 Do not provide any extra information beyond confirming that the audio was saved successfully."""
 
 
@@ -165,7 +170,7 @@ def text_to_speech_tool(file_path: str = "subtitles.txt"):
                 engine.setProperty('voice', voice.id)
                 break
 
-        # engine.save_to_file(text, filename)
+        engine.save_to_file(text, filename)
         engine.runAndWait()
 
         return f"Audio saved to {filename}"
@@ -186,9 +191,7 @@ tts_agent = create_openai_tools_agent(
 )
 tts_agent_executor = AgentExecutor(agent=tts_agent, tools=tts_tools, verbose=True)
 
-
-
-# mpconfig.change_settings({'IMAGEMAGICK_BINARY': "C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
+mpconfig.change_settings({'IMAGEMAGICK_BINARY': "C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
 
 video_edit_prompt = """DO NOT START UNTIL THE PREVIOUS AGENT FINISH
 You are a video editing agent.
@@ -218,7 +221,6 @@ def edit_video(
             raise FileNotFoundError(f"Input video file not found: {input_video}")
         if not os.path.isfile(audio_file):
             raise FileNotFoundError(f"Audio file not found: {audio_file}")
-
 
         video_clip = VideoFileClip(input_video)
         new_audio_clip = AudioFileClip(audio_file)
@@ -276,21 +278,26 @@ Your task is to add subtitles to the video:
 Do not do anything else. Output only your final statement.
 """
 
-model = whisper.load_model('large')
+model = whisper.load_model('base')
+
 
 def get_transcribe(audio: str, language: str = 'en'):
     return model.transcribe(audio=audio, language=language, verbose=True)
+
 
 def save_file(results, format='srt'):
     output_dir = 'output'
     writer = get_writer(format, output_dir)
     writer(results, f'transcribe.{format}')
 
+
 import sys
+
+
 @tool
 def add_subtitles_tool(
-    input_video: str = "output_final.mp4",
-    output_with_subtitles: str = "output_with_subtitles.mp4"
+        input_video: str = "output_final.mp4",
+        output_with_subtitles: str = "output_with_subtitles.mp4"
 ):
     """
     Adds subtitles from a transcribed MP3 file to a video and saves the result.
@@ -304,7 +311,8 @@ def add_subtitles_tool(
 
     if not os.path.isfile(audio_path):
         return f"Plik audio nie istnieje: {audio_path}"
-    else: print(f"Plik audio znaleziony: {audio_path}")
+    else:
+        print(f"Plik audio znaleziony: {audio_path}")
 
     # Transcribe audio and save subtitles
     try:
@@ -327,10 +335,9 @@ def add_subtitles_tool(
         video_clip = VideoFileClip(input_video)
         subtitles = SubRipFile.open(subtitles_path)
         subtitle_clips = []
-        max_width = 30
+        max_width = 25
 
         for subtitle in subtitles:
-
             text = fill(subtitle.text.replace('\n', ' '), width=max_width)
             start = subtitle.start.ordinal / 1000.0  # Convert to seconds
             end = subtitle.end.ordinal / 1000.0
@@ -350,7 +357,6 @@ def add_subtitles_tool(
             )
             subtitle_clips.append(subtitle_clip)
 
-
         final_video = CompositeVideoClip([video_clip] + subtitle_clips)
         final_video.write_videofile(output_with_subtitles, codec="libx264", audio_codec="aac")
 
@@ -358,6 +364,7 @@ def add_subtitles_tool(
 
     except Exception as e:
         return f"Error in add_subtitles_tool: {str(e)}"
+
 
 subtitles_tools = [add_subtitles_tool]
 
@@ -372,14 +379,15 @@ subtitles_agent = create_openai_tools_agent(
 )
 subtitles_agent_executor = AgentExecutor(agent=subtitles_agent, tools=subtitles_tools, verbose=True)
 
-
 summarise_prompt = """Your task is to summarise all given messages in report
 to inform user about all actions that were undertaken:
 MESSAGES: {messages}"""
 
+
 class AgentState(TypedDict):
     messages: Annotated[Sequence[BaseMessage], operator.add]
     next: str
+
 
 WORKFLOW = StateGraph(AgentState)
 
@@ -409,17 +417,19 @@ prompt = ChatPromptTemplate.from_messages(
 
 
 class RouteResponse(BaseModel):
-    next: Literal["VIDEO_AGENT", "REDDIT_AGENT", "TTS_AGENT", "EDIT_VIDEO_AGENT","SUBTITLES_AGENT",  "FINISH"]
+    next: Literal["VIDEO_AGENT", "REDDIT_AGENT", "TTS_AGENT", "EDIT_VIDEO_AGENT", "SUBTITLES_AGENT", "FINISH"]
+
 
 supervisor_chain = prompt | llm.with_structured_output(RouteResponse)
 
+
 def supervisor_node(state):
     print("Supervisor received state:", state)
-    
+
     # Keep track of executed agents
     if "executed_agents" not in state:
         state["executed_agents"] = set()
-    
+
     result = supervisor_chain.invoke(state)
     print("Supervisor decided next step:", result.next)
 
@@ -433,30 +443,27 @@ def supervisor_node(state):
     return result
 
 
-
-
-
 def agent_node(state, agent, name):
+    print(f"Entering {name} node")
+    start = time.time()
+    try:
+        result = agent.invoke(state)
+    except Exception as e:
+        print(e)
+        print("Error!!!")
+        return {
+            "messages": [AIMessage(content=str(e), name=name, id=str(time.time()))]
+        }
+    print(f"Agent: {name} got result in {round(time.time() - start, 2)}")
+    print(f"Result: {result}")
+    print(f"Last message: {result['messages'][-1].content}")
+    last_msg = result['messages'][-1]
+    output = result.get("output", last_msg)
 
-  print(f"Entering {name} node")
-  start = time.time()
-  try:
-      result = agent.invoke(state)
-  except Exception as e:
-      print(e)
-      print("Error!!!")
-      return {
-          "messages": [AIMessage(content=str(e), name=name, id=str(time.time()))]
-      }
-  print(f"Agent: {name} got result in {round(time.time() - start, 2)}")
-  print(f"Result: {result}")
-  print(f"Last message: {result['messages'][-1].content}")
-  last_msg = result['messages'][-1]
-  output = result.get("output", last_msg)
+    return {
+        "messages": [AIMessage(content=output, name=name, id=str(time.time()))]
+    }
 
-  return {
-      "messages": [AIMessage(content=output, name=name, id=str(time.time()))]
-  }
 
 WORKFLOW.add_node("supervisor", supervisor_node)
 WORKFLOW.add_edge(START, "supervisor")
@@ -465,19 +472,18 @@ video_node = functools.partial(agent_node, agent=video_agent_executor, name="VID
 
 
 def summarise_node(state):
-  full_prompt = summarise_prompt.format(messages=state["messages"])
-  summary = llm.invoke(full_prompt)
-  print(summary)
-  return {
-      "messages": [AIMessage(content=summary.content, name="Summary", id=str(time.time()))]
-  }
+    full_prompt = summarise_prompt.format(messages=state["messages"])
+    summary = llm.invoke(full_prompt)
+    print(summary)
+    return {
+        "messages": [AIMessage(content=summary.content, name="Summary", id=str(time.time()))]
+    }
 
 
 REDDIT_node = functools.partial(agent_node, agent=reddit_agent_executor, name="REDDIT_AGENT")
 TTS_node = functools.partial(agent_node, agent=tts_agent_executor, name="TTS_AGENT")
 EDIT_VIDEO_node = functools.partial(agent_node, agent=edit_video_executor, name="EDIT_VIDEO_AGENT")
 SUBTITLES_node = functools.partial(agent_node, agent=subtitles_agent_executor, name="SUBTITLES_AGENT")
-
 
 WORKFLOW.add_node("VIDEO_AGENT", video_node)
 WORKFLOW.add_node("REDDIT_AGENT", REDDIT_node)
@@ -487,19 +493,19 @@ WORKFLOW.add_node("SUBTITLES_AGENT", SUBTITLES_node)
 WORKFLOW.add_node("FINISH", summarise_node)
 WORKFLOW.add_edge("FINISH", END)
 
-agent_names = ["VIDEO_AGENT", "REDDIT_AGENT", "TTS_AGENT","EDIT_VIDEO_AGENT","SUBTITLES_AGENT", "FINISH"]
+agent_names = ["VIDEO_AGENT", "REDDIT_AGENT", "TTS_AGENT", "EDIT_VIDEO_AGENT", "SUBTITLES_AGENT", "FINISH"]
 conditional_map = {k: k for k in agent_names}
 WORKFLOW.add_conditional_edges("supervisor", lambda x: x["next"], conditional_map)
 
-WORKFLOW.add_edge(START, "VIDEO_AGENT")
 WORKFLOW.add_edge("VIDEO_AGENT", "supervisor")
 WORKFLOW.add_edge("REDDIT_AGENT", "supervisor")
 WORKFLOW.add_edge("TTS_AGENT", "supervisor")
 WORKFLOW.add_edge("EDIT_VIDEO_AGENT", "supervisor")
-WORKFLOW.add_edge("SUBTITLES_AGENT", "FINISH")
-WORKFLOW.add_edge("FINISH", END)
+WORKFLOW.add_edge("SUBTITLES_AGENT", "supervisor")
+WORKFLOW.add_edge("FINISH", "supervisor")
 
 GRAPH = WORKFLOW.compile()
+
 
 def run_graph(graph, user_input):
     config = {"configurable": {"thread_id": "2"}}
@@ -514,33 +520,22 @@ def run_graph(graph, user_input):
                 ]
             }
             , config=config)
-        
-        if result["messages"][-1].content == "FINISH":
-            print("Process finished successfully.")
-            return "Process completed"
-        
-        return "Unexpected result"
+        result = result["messages"][-1].content
+
+        return result
     except Exception as e:
         return f"Could not generate response, because of {e}"
 
 
-
+#
 # prompt1= (
-#         "find and download youtube video about minecraft parkure"
+#         "find and download youtube video about minecraft parkure game play"
 #         "next find a story on reddit about funny stories "
 #         "next generate speech based on the text in the text file subtitles.txt "
 #         "next overlay the audio and cut the video "
 #         "finally, add subtitles to the video and then finish"
 #     )
 # run_graph(GRAPH, prompt1)
-# app = FastAPI()
-
-
-# # Model danych wejściowych
-# class UserInput(BaseModel):
-#     video_topic: str
-#     reddit_topic: str
-
 
 def generate_prompt(video_topic: str, reddit_topic: str):
     """
@@ -553,28 +548,5 @@ def generate_prompt(video_topic: str, reddit_topic: str):
         "next overlay the audio and cut the video "
         "finally, add subtitles to the video and then finish"
     )
-
-
-# @app.post("/generate_video")
-# def generate_and_return_video(user_input: UserInput):
-#     # Wygeneruj prompt
-#     prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)
-
-#     # Uruchom przepływ pracy
-#     try:
-#         result = run_graph(GRAPH, prompt)  # Zakładamy, że funkcja run_graph generuje wideo
-#         output_file = "output_with_subtitles.mp4"
-
-#         # Sprawdź, czy plik istnieje
-#         if not os.path.exists(output_file):
-#             raise HTTPException(status_code=500, detail="Plik wideo nie został wygenerowany.")
-
-#         return FileResponse(
-#             path=output_file,
-#             media_type="video/mp4",
-#             filename="output_with_subtitles.mp4"
-#         )
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
 
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
