@@ -8,60 +8,79 @@
     <title>Main page</title>
 </head>
 <body>
-    <h1>Generate Video</h1>
-    <form id="videoForm">
-        <label for="video_topic">Video Topic:</label>
-        <input type="text" id="video_topic" name="video_topic" required>
-        <label for="reddit_topic">Reddit Topic:</label>
-        <input type="text" id="reddit_topic" name="reddit_topic" required>
-        <button type="submit" id="generate">Generate</button>
-        </form>
-        <h1>Upload your brainroot on TikTok</h1>
-    <form id="upload-form">
-            <label for="title">Tiktok title</label>
-            <input type="text" name="title" id="title">
+    <div class="black-bar top"></div>
+    <div class="title">
+        <div class="title-photo">
+            <img src="https://admonkey.pl/wp-content/uploads/2018/08/Tik-Tok-Logo.png.webp" alt="Brainroot Generator">
+        </div>
+        <h1 class="text_shadows-title">BRAINROOT GENERATOR</h1>
+    </div>
     
-            <div id="privacy_levels">
-                <legend>Privacy level:</legend>
-                <input type="radio" value="SELF_ONLY" id="self" name="privacy_level" required>
-                <label for="self">Self only</label>
-                <input type="radio" value="MUTUAL_FOLLOW_FRIENDS" id="mutual" name="privacy_level">
-                <label for="mutual">Mutual follow friends</label>
-                <input type="radio" value="PUBLIC_TO_EVERYONE" id="public" name="privacy_level">
-                <label for="public">Public to everyone</label>
-            </div>
-    
-            <div id="comment_options">
-                <legend>Comment option:</legend>
-                <input type="radio" value="false" id="com_disabled" name="comment_option" required>
-                <label for="com_disabled">Disabled</label>
-                <input type="radio" value="true" id="com_enabled" name="comment_option">
-                <label for="com_enabled">Enabled</label>
-            </div>
-    
-            <div id="duet_options">
-                <legend>Duet option:</legend>
-                <input type="radio" value="false" id="duet_disabled" name="duet_option" required>
-                <label for="duet_disabled">Disabled</label>
-                <input type="radio" value="true" id="duet_enabled" name="duet_option">
-                <label for="duet_enabled">Enabled</label>
-            </div>
-    
-            <div id="stitch_options"
-                <legend>Stitch option:</legend>
-                <input type="radio" value="false" id="stitch_disabled" name="stitch_option" required>
-                <label for="stitch_disabled">Disabled</label>
-                <input type="radio" value="true" id="stitch_enabled" name="stitch_option">
-                <label for="stitch_enabled">Enabled</label>
-            </div>
-    
-            <label for="duration">Max video post duration (sec):</label>
-            <input type="number" value="max_video_post_duration_sec" id="duration" max="600" required>
-    
-            <label for="video">Wybierz plik wideo:</label>
-            <input type="file" id="video" name="video" accept="video/*" required="">
-        <button type="submit">Upload</button>
-    </form>
+    <div class="rainbow-box">
+        <div class="content">
+            <h1>Generate Video</h1>
+            <form id="videoForm">
+                <label for="video_topic">Video Topic:</label>
+                <input type="text" id="video_topic" name="video_topic" required><br><br>
+            
+                <label for="reddit_topic">Reddit Topic:</label>
+                <input type="text" id="reddit_topic" name="reddit_topic" required><br><br>
+            
+                <button type="submit" id="generate" class="button-style">Generate</button>
+            </form>
+            
+            <h1>Upload on TikTok</h1>
+            <form id="upload-form">
+                <label for="title">Tiktok title</label>
+                <input type="text" name="title" id="title"><br><br>
+            
+                <div id="privacy_levels">
+                    <legend>Privacy level:</legend>
+                    <input type="radio" value="SELF_ONLY" id="self" name="privacy_level" required>
+                    <label for="self">Self only</label>
+                    <input type="radio" value="MUTUAL_FOLLOW_FRIENDS" id="mutual" name="privacy_level">
+                    <label for="mutual">Mutual follow friends</label>
+                    <input type="radio" value="PUBLIC_TO_EVERYONE" id="public" name="privacy_level">
+                    <label for="public">Public to everyone</label>
+                </div>
+            
+                <div id="stitch_options">
+                    <legend>Stitch option:</legend>
+                    <input type="radio" value="false" id="stitch_disabled" name="stitch_option" required>
+                    <label for="stitch_disabled">Disabled</label>
+                    <input type="radio" value="true" id="stitch_enabled" name="stitch_option">
+                    <label for="stitch_enabled">Enabled</label>
+                </div>
+            
+                <div id="comment_options">
+                    <legend>Comment option:</legend>
+                    <input type="radio" value="false" id="com_disabled" name="comment_option" required>
+                    <label for="com_disabled">Disabled</label>
+                    <input type="radio" value="true" id="com_enabled" name="comment_option">
+                    <label for="com_enabled">Enabled</label>
+                </div>
+            
+                <div id="duet_options">
+                    <legend>Duet option:</legend>
+                    <input type="radio" value="false" id="duet_disabled" name="duet_option" required>
+                    <label for="duet_disabled">Disabled</label>
+                    <input type="radio" value="true" id="duet_enabled" name="duet_option">
+                    <label for="duet_enabled">Enabled</label>
+                </div>
+            
+                <label for="duration">Max video post duration (sec):</label>
+                <input type="number" id="duration" max="600" required><br><br>
+            
+                <!-- <label for="video">Select video file:</label>
+                <input type="file" id="video" name="video" accept="video/*" required><br><br> -->
+                <label for="video" class="custom-file-upload">Select video file:</label>
+                <input type="file" id="video" name="video" accept="video/*" hidden><br><br>
+                <button type="submit" class="button-style">Upload</button>
+            </form>
+            
+        
+        </div>
+    <div class="black-bar bottom"></div>
     <script type="module" src="main.js"></script>
 </body>
 </html>

@@ -67,7 +67,10 @@ export function setupUploadButton(accessToken) {
 
         const file = document.getElementById("video").files[0];
         const videoSize = file.size;
-        const DEFAULT_CHUNK_SIZE = 262144; // 256 KB
+        const MIN_CHUNK_SIZE = 262144; // Minimalny dozwolony rozmiar chunku (256 KB)
+        const totalChunks = Math.ceil(videoSize / MIN_CHUNK_SIZE); // Obliczenie liczby chunków
+        const chunkSize = Math.ceil(videoSize / totalChunks); // Dynamiczne dopasowanie chunk_size
+
 
         const postInfo = {
             title: document.getElementById("title").value,
@@ -77,11 +80,12 @@ export function setupUploadButton(accessToken) {
             disable_stitch: document.querySelector('input[name="stitch_option"]:checked').value === "true",
             video_cover_timestamp_ms: document.getElementById("duration").valueAsNumber,
         };
+
         const sourceInfo = {
             source: "FILE_UPLOAD",
             video_size: videoSize,
-            chunk_size: Math.min(DEFAULT_CHUNK_SIZE, videoSize),
-            total_chunk_count: Math.ceil(videoSize / DEFAULT_CHUNK_SIZE),
+            chunk_size: chunkSize,
+            total_chunk_count: totalChunks,
             // chunk_size: videoSize,
             // total_chunk_count: 1,
         };
