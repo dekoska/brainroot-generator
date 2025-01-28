@@ -69,7 +69,7 @@ export function setupUploadButton(accessToken) {
         const videoSize = file.size;
         const MIN_CHUNK_SIZE = 262144; // Minimalny dozwolony rozmiar chunku (256 KB)
         const totalChunks = Math.ceil(videoSize / MIN_CHUNK_SIZE); // Obliczenie liczby chunków
-        const chunkSize = Math.ceil(videoSize / totalChunks); // Dynamiczne dopasowanie chunk_size
+        const chunkSize = Math.ceil(videoSize / totalChunks / MIN_CHUNK_SIZE) * MIN_CHUNK_SIZE;
 
 
         const postInfo = {
