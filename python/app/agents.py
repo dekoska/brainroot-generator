@@ -39,8 +39,7 @@ from fastapi.responses import FileResponse
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
-    model="gpt-4o",
- )
+    model="gpt-4o")
 
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
@@ -145,6 +144,37 @@ Your task is to read the text from the text file provided by the user and save i
 Do not provide any extra information beyond confirming that the audio was saved successfully."""
 
 
+# def text_to_speech_tool(file_path: str = "subtitles.txt"):
+#     """
+#     Converts text to speech (TTS) using pyttsx3 and saves it as output.mp3.
+#     """
+#     try:
+#         if not os.path.isfile(file_path):
+#             return f"File not found: {file_path}"
+#
+#         with open(file_path, "r", encoding="utf-8") as f:
+#             text = f.read()
+#
+#         filename = "output.mp3"
+#         engine = pyttsx3.init()
+#         engine.setProperty('rate', 150)
+#         engine.setProperty('volume', 1.0)
+#
+#         voices = engine.getProperty('voices')
+#         for voice in voices:
+#             if "Samantha" in voice.name:
+#                 engine.setProperty('voice', voice.id)
+#                 print(f"Selected voice: {voice.name}")
+#
+#         engine.save_to_file(text, filename)
+#         engine.runAndWait()
+#
+#         return f"Audio saved to {filename}"
+#     except Exception as e:
+#         return f"Error in TTS: {str(e)}"
+
+from gtts import gTTS
+
 @tool
 def text_to_speech_tool(file_path: str = "subtitles.txt"):
     """
@@ -157,24 +187,19 @@ def text_to_speech_tool(file_path: str = "subtitles.txt"):
         with open(file_path, "r", encoding="utf-8") as f:
             text = f.read()
 
+        if not text.strip():
+            return "The file is empty."
+
+        tts = gTTS(text, lang="en")
         filename = "output.mp3"
-        engine = pyttsx3.init()
-        engine.setProperty('rate', 150)
-        engine.setProperty('volume', 1.0)
+        tts.save(filename)
 
-        voices = engine.getProperty('voices')
-        for voice in voices:
-            if "en" in voice.languages or "English" in voice.name:
-                engine.setProperty('voice', voice.id)
-                break
-
-        engine.save_to_file(text, filename)
-        engine.runAndWait()
-
+        print(f"[SUCCESS] Audio saved to {filename}")
         return f"Audio saved to {filename}"
-    except Exception as e:
-        return f"Error in TTS: {str(e)}"
 
+    except Exception as e:
+        print(f"[ERROR] Error in TTS: {str(e)}")
+        return f"Error in TTS: {str(e)}"
 
 tts_tools = [text_to_speech_tool]
 
@@ -189,7 +214,7 @@ tts_agent = create_openai_tools_agent(
 )
 tts_agent_executor = AgentExecutor(agent=tts_agent, tools=tts_tools, verbose=True)
 
-mpconfig.change_settings({'IMAGEMAGICK_BINARY': "C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
+# mpconfig.change_settings({'IMAGEMAGICK_BINARY': "C:\Program Files\ImageMagick-7.1.1-Q16-HDRI\magick.exe"})
 
 video_edit_prompt = """DO NOT START UNTIL THE PREVIOUS AGENT FINISH
 You are a video editing agent.
@@ -525,25 +550,25 @@ def run_graph(graph, user_input):
 
 
 #
-# prompt1= (
-#         "find and download youtube video about minecraft parkure game play"
-#         "next find a story on reddit about funny stories "
-#         "next generate speech based on the text in the text file subtitles.txt "
-#         "next overlay the audio and cut the video "
-#         "finally, add subtitles to the video and then finish"
-#     )
-# run_graph(GRAPH, prompt1)
-
-def generate_prompt(video_topic: str, reddit_topic: str):
-    """
-    Generuje prompt na podstawie wyborów użytkownika.
-    """
-    return (
-        f"find and download youtube video in good quality and without any subtitles on it about {video_topic} "
-        f"next find a story on reddit about {reddit_topic} "
+prompt1= (
+        "find and download youtube video about minecraft parkure game play"
+        "next find a story on reddit about funny stories "
         "next generate speech based on the text in the text file subtitles.txt "
         "next overlay the audio and cut the video "
         "finally, add subtitles to the video and then finish"
     )
+run_graph(GRAPH, prompt1)
+
+# def generate_prompt(video_topic: str, reddit_topic: str):
+#     """
+#     Generuje prompt na podstawie wyborów użytkownika.
+#     """
+#     return (
+#         f"find and download youtube video in good quality and without any subtitles on it about {video_topic} "
+#         f"next find a story on reddit about {reddit_topic} "
+#         "next generate speech based on the text in the text file subtitles.txt "
+#         "next overlay the audio and cut the video "
+#         "finally, add subtitles to the video and then finish"
+#     )
 
 # uvicorn main:app --host 0.0.0.0 --port 8000 --reload
