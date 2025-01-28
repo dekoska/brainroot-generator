@@ -36,10 +36,11 @@ from textwrap import fill
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 
-# from langchain.chat_models import ChatOpenAI
 from langchain_openai import ChatOpenAI
 
-
+llm = ChatOpenAI(
+    model="gpt-4o",
+ )
 
 video_prompt = """You are a video research agent.
 Your task is to search for and download the exact video provided in the user's query without making any modifications or assumptions.
@@ -150,15 +151,12 @@ def text_to_speech_tool(file_path: str = "subtitles.txt"):
     Converts text to speech (TTS) using pyttsx3 and saves it as output.mp3.
     """
     try:
-        # Sprawdź, czy plik istnieje
         if not os.path.isfile(file_path):
             return f"File not found: {file_path}"
 
-        # Odczytaj tekst z pliku
         with open(file_path, "r", encoding="utf-8") as f:
             text = f.read()
 
-        # Ustawienia TTS
         filename = "output.mp3"
         engine = pyttsx3.init()
         engine.setProperty('rate', 150)
@@ -314,7 +312,6 @@ def add_subtitles_tool(
     else:
         print(f"Plik audio znaleziony: {audio_path}")
 
-    # Transcribe audio and save subtitles
     try:
         result = get_transcribe(audio=audio_path)
         if result and 'text' in result:
@@ -339,7 +336,7 @@ def add_subtitles_tool(
 
         for subtitle in subtitles:
             text = fill(subtitle.text.replace('\n', ' '), width=max_width)
-            start = subtitle.start.ordinal / 1000.0  # Convert to seconds
+            start = subtitle.start.ordinal / 1000.0 
             end = subtitle.end.ordinal / 1000.0
 
             subtitle_clip = (

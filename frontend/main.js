@@ -5,7 +5,6 @@ import { generateVideo } from './js/generate-brainroot.js';
 
 let accessToken = null;
 
-// Get authentication token and setup functionalities
 getAccessToken().then(token => {
     if (token) {
         accessToken = token;
@@ -17,7 +16,6 @@ getAccessToken().then(token => {
     }
 });
 
-// Handle form submission
 document.getElementById("videoForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
@@ -38,10 +36,9 @@ document.getElementById("videoForm").addEventListener("submit", async function (
     }
 });
 
-// Check if the video is ready for download
 async function checkVideoReady() {
     let videoReady = false;
-    const maxRetries = 30;  // Retry 30 times with 5 seconds interval
+    const maxRetries = 30;  
     let attempts = 0;
 
     while (!videoReady && attempts < maxRetries) {
@@ -64,7 +61,6 @@ async function checkVideoReady() {
     throw new Error("Video was not generated within the expected time.");
 }
 
-// Download the generated video
 async function downloadVideo() {
     try {
         const link = document.createElement("a");

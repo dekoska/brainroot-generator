@@ -15,7 +15,7 @@ app.add_middleware(
     allow_methods=["*"], 
     allow_headers=["*"], 
 )
-# Model danych wejściowych
+
 class UserInput(BaseModel):
     video_topic: str
     reddit_topic: str
@@ -34,7 +34,6 @@ def generate_prompt(video_topic: str, reddit_topic: str):
         "finally, add subtitles to the video and then finish"
     )
     
-# Funkcja do generowania wideo w tle
 async def generate_real_video(user_input: UserInput):
     prompt = generate_prompt(user_input.video_topic, user_input.reddit_topic)
 

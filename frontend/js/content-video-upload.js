@@ -79,12 +79,10 @@ export function setupUploadButton(accessToken) {
 
         const MIN_CHUNK_SIZE = 5 * 1024 * 1024;  // 5 MB
         const MAX_CHUNK_SIZE = 64 * 1024 * 1024; // 64 MB
+        const totalChunks = Math.ceil(videoSize / MAX_CHUNK_SIZE);
 
-        const totalChunks = Math.ceil(videoSize / MAX_CHUNK_SIZE); // Liczymy chunki na podstawie max size
-
-        // Chunk size musi być pomiędzy 5 MB a 64 MB
         let chunkSize = Math.ceil(videoSize / totalChunks);
-        chunkSize = Math.max(MIN_CHUNK_SIZE, Math.min(MAX_CHUNK_SIZE, chunkSize)); // Ograniczamy do dopuszczalnych wartości
+        chunkSize = Math.max(MIN_CHUNK_SIZE, Math.min(MAX_CHUNK_SIZE, chunkSize));
 
         const sourceInfo = {
             source: "FILE_UPLOAD",
