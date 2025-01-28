@@ -67,11 +67,7 @@ export function setupUploadButton(accessToken) {
 
         const file = document.getElementById("video").files[0];
         const videoSize = file.size;
-        const MIN_CHUNK_SIZE = 262144; // Minimalny dozwolony rozmiar chunku (256 KB)
-        const totalChunks = Math.ceil(videoSize / MIN_CHUNK_SIZE); // Obliczenie liczby chunków
-        const chunkSize = Math.ceil(videoSize / totalChunks / MIN_CHUNK_SIZE) * MIN_CHUNK_SIZE;
-
-
+        
         const postInfo = {
             title: document.getElementById("title").value,
             privacy_level: document.querySelector('input[name="privacy_level"]:checked').value,
@@ -81,13 +77,20 @@ export function setupUploadButton(accessToken) {
             video_cover_timestamp_ms: document.getElementById("duration").valueAsNumber,
         };
 
+        const MIN_CHUNK_SIZE = 5 * 1024 * 1024;  // 5 MB
+        const MAX_CHUNK_SIZE = 64 * 1024 * 1024; // 64 MB
+
+        const totalChunks = Math.ceil(videoSize / MAX_CHUNK_SIZE); // Liczymy chunki na podstawie max size
+
+        // Chunk size musi być pomiędzy 5 MB a 64 MB
+        let chunkSize = Math.ceil(videoSize / totalChunks);
+        chunkSize = Math.max(MIN_CHUNK_SIZE, Math.min(MAX_CHUNK_SIZE, chunkSize)); // Ograniczamy do dopuszczalnych wartości
+
         const sourceInfo = {
             source: "FILE_UPLOAD",
             video_size: videoSize,
             chunk_size: chunkSize,
-            total_chunk_count: totalChunks,
-            // chunk_size: videoSize,
-            // total_chunk_count: 1,
+            total_chunk_count: Math.ceil(videoSize / chunkSize),
         };
 
         console.log(postInfo);
