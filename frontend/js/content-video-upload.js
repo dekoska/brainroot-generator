@@ -67,6 +67,7 @@ export function setupUploadButton(accessToken) {
 
         const file = document.getElementById("video").files[0];
         const videoSize = file.size;
+        const DEFAULT_CHUNK_SIZE = 262144; // 256 KB
 
         const postInfo = {
             title: document.getElementById("title").value,
@@ -79,8 +80,10 @@ export function setupUploadButton(accessToken) {
         const sourceInfo = {
             source: "FILE_UPLOAD",
             video_size: videoSize,
-            chunk_size: videoSize,
-            total_chunk_count: 1,
+            chunk_size: Math.min(DEFAULT_CHUNK_SIZE, videoSize),
+            total_chunk_count: Math.ceil(videoSize / DEFAULT_CHUNK_SIZE),
+            // chunk_size: videoSize,
+            // total_chunk_count: 1,
         };
 
         console.log(postInfo);
