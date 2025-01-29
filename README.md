@@ -22,6 +22,8 @@ Wszystkimi agentami obsługuje ChatGPT4o
 
 🧠 Modele AI do metryk
 
+Metryki na branchu agenci python/agenci
+
 https://huggingface.co/openai/whisper-large-v3-turbo
 
 https://huggingface.co/facebook/seamless-m4t-v2-large
